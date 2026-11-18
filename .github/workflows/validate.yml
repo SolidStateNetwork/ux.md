@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Validate Examples & Scripts
+    name: Validate Examples, CLI, MCP Server & Showcase
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,17 +20,22 @@ jobs:
           node-version: '20'
 
       - name: Validate all 5 reference UX.md examples (--strict)
-        run: |
-          node skills/ux-md-generator/scripts/validate-ux.mjs examples/b2b-saas-workspace/UX.md --strict
-          node skills/ux-md-generator/scripts/validate-ux.mjs examples/ai-chat-canvas/UX.md --strict
-          node skills/ux-md-generator/scripts/validate-ux.mjs examples/analytics-dashboard/UX.md --strict
-          node skills/ux-md-generator/scripts/validate-ux.mjs examples/ecommerce-storefront/UX.md --strict
-          node skills/ux-md-generator/scripts/validate-ux.mjs examples/developer-tool/UX.md --strict
+        run: npm test
 
-      - name: Test CLI Generator, Extractor, HTML Previewer, and Diff Engine
+      - name: Test CLI (init, extract, generate, validate, preview, diff)
         run: |
-          node skills/ux-md-generator/scripts/extract-ux.mjs . --output /tmp/ux-scan.json
-          node skills/ux-md-generator/scripts/generate-ux.mjs --from-scan /tmp/ux-scan.json --project "CI Test Project" --output /tmp/generated-UX.md
-          node skills/ux-md-generator/scripts/validate-ux.mjs /tmp/generated-UX.md --strict
-          node skills/ux-md-generator/scripts/preview-ux.mjs /tmp/generated-UX.md --output /tmp/ux-preview.html
-          node skills/ux-md-generator/scripts/diff-ux.mjs examples/b2b-saas-workspace/UX.md /tmp/generated-UX.md --json
+          node ./bin/ux-md.mjs --version
+          node ./bin/ux-md.mjs extract . --output /tmp/ux-scan.json
+          node ./bin/ux-md.mjs generate --from-scan /tmp/ux-scan.json --project "CI Test Project" --output /tmp/generated-UX.md
+          node ./bin/ux-md.mjs validate /tmp/generated-UX.md --strict
+          node ./bin/ux-md.mjs preview /tmp/generated-UX.md --output /tmp/ux-preview.html
+          node ./bin/ux-md.mjs diff examples/b2b-saas-workspace/UX.md /tmp/generated-UX.md --json
+
+      - name: Test stdio MCP Server (initialize, tools/list, tools/call)
+        run: |
+          printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}\n{"jsonrpc":"2.0","id":2,"method":"tools/list"}\n{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ux_validate","arguments":{"file":"examples/b2b-saas-workspace/UX.md","strict":true}}}\n' | node ./scripts/mcp-server.mjs > /tmp/mcp-out.jsonl
+          grep -q '"ux_validate"' /tmp/mcp-out.jsonl
+          grep -q '"isError":false' /tmp/mcp-out.jsonl
+
+      - name: Build static interactive HTML showcase
+        run: npm run build:showcase

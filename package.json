@@ -1,0 +1,67 @@
+{
+  "name": "ux-md",
+  "version": "1.0.0",
+  "description": "UX.md: Format specification, zero-dependency CLI toolkit, MCP server, and AI agent skill for structural UI/UX architecture (App Shell, Page Archetypes, Route Graphs, 4-State Matrix, and Layout Primitives). The structural companion to DESIGN.md and AGENTS.md.",
+  "type": "module",
+  "license": "MIT",
+  "author": "SolidStateNetwork",
+  "homepage": "https://solidstatenetwork.github.io/ux.md/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SolidStateNetwork/ux.md.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SolidStateNetwork/ux.md/issues"
+  },
+  "bin": {
+    "ux-md": "./bin/ux-md.mjs",
+    "ux-md-mcp": "./scripts/mcp-server.mjs"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "skills/",
+    "docs/",
+    "examples/",
+    "assets/",
+    "action.yml",
+    "llms.txt",
+    "PHILOSOPHY.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "extract": "node ./bin/ux-md.mjs extract",
+    "generate": "node ./bin/ux-md.mjs generate",
+    "validate": "node ./bin/ux-md.mjs validate",
+    "preview": "node ./bin/ux-md.mjs preview",
+    "diff": "node ./bin/ux-md.mjs diff",
+    "mcp": "node ./scripts/mcp-server.mjs",
+    "build:showcase": "node ./scripts/build-showcase.mjs",
+    "test": "node ./bin/ux-md.mjs validate examples/b2b-saas-workspace/UX.md --strict && node ./bin/ux-md.mjs validate examples/ai-chat-canvas/UX.md --strict && node ./bin/ux-md.mjs validate examples/analytics-dashboard/UX.md --strict && node ./bin/ux-md.mjs validate examples/ecommerce-storefront/UX.md --strict && node ./bin/ux-md.mjs validate examples/developer-tool/UX.md --strict"
+  },
+  "keywords": [
+    "ux.md",
+    "ux-md",
+    "design.md",
+    "design-md",
+    "agents.md",
+    "agents-md",
+    "agent-skills",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude-code",
+    "cursor",
+    "antigravity",
+    "codex",
+    "opencode",
+    "ui-architecture",
+    "ux-specification",
+    "wireframe",
+    "linter"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

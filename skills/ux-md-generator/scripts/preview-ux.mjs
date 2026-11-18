@@ -140,7 +140,8 @@ const html = `<!DOCTYPE html>
     :root {
       --bg-canvas: #0b0f17;
       --bg-surface: #111827;
-      --bg-elevated: #1e293b;
+      --bg-elevated: #0f172a;
+      --bg-code: #070a10;
       --border-subtle: #1f2937;
       --border-strong: #334155;
       --text-primary: #f8fafc;
@@ -155,10 +156,46 @@ const html = `<!DOCTYPE html>
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
+    [data-theme="light"] {
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-elevated: #f1f5f9;
+      --bg-code: #f1f5f9;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --accent-primary: #0369a1;
+      --accent-bg: #e0f2fe;
+      --status-pass: #15803d;
+      --status-warn: #b45309;
+      --status-fail: #b91c1c;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    a[href],
+    button,
+    summary,
+    select,
+    label[for],
+    input[type="checkbox"],
+    input[type="radio"],
+    [role="button"],
+    [role="tab"],
+    [role="switch"] {
+      cursor: pointer;
+    }
+
+    :disabled,
+    [aria-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.55;
     }
 
     body {
@@ -166,7 +203,7 @@ const html = `<!DOCTYPE html>
       color: var(--text-primary);
       font-family: var(--font-sans);
       line-height: 1.5;
-      padding: 24px 16px 64px;
+      padding: 24px 16px 48px;
     }
 
     .container {
@@ -174,7 +211,7 @@ const html = `<!DOCTYPE html>
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 28px;
     }
 
     header.top-header {
@@ -187,8 +224,15 @@ const html = `<!DOCTYPE html>
       border-bottom: 1px solid var(--border-strong);
     }
 
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
     .title-group h1 {
-      font-size: 1.75rem;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
       font-weight: 700;
       letter-spacing: -0.02em;
     }
@@ -203,12 +247,14 @@ const html = `<!DOCTYPE html>
     .pill {
       font-family: var(--font-mono);
       font-size: 0.78rem;
-      padding: 4px 10px;
+      padding: 6px 10px;
       border-radius: 6px;
       background: var(--bg-surface);
       border: 1px solid var(--border-strong);
       color: var(--text-secondary);
       font-variant-numeric: tabular-nums;
+      display: inline-flex;
+      align-items: center;
     }
 
     .pill-pass {
@@ -233,7 +279,7 @@ const html = `<!DOCTYPE html>
     }
 
     section.card h2 {
-      font-size: 1.125rem;
+      font-size: clamp(1rem, 1.8vw, 1.125rem);
       font-weight: 600;
       color: var(--text-primary);
       display: flex;
@@ -249,7 +295,8 @@ const html = `<!DOCTYPE html>
       gap: 8px;
     }
 
-    button.bp-btn {
+    button.bp-btn,
+    button.theme-btn {
       min-height: 44px;
       min-width: 44px;
       padding: 8px 14px;
@@ -260,17 +307,32 @@ const html = `<!DOCTYPE html>
       font-family: var(--font-mono);
       font-size: 0.82rem;
       font-weight: 600;
-      cursor: pointer;
       font-variant-numeric: tabular-nums;
+      transition: background-color 120ms ease, border-color 120ms ease, transform 80ms ease;
+    }
+
+    button.bp-btn:hover,
+    button.theme-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+    }
+
+    button.bp-btn:active,
+    button.theme-btn:active {
+      transform: translateY(1px);
     }
 
     button.bp-btn[aria-pressed="true"] {
       background: var(--accent-bg);
       border-color: var(--accent-primary);
       color: var(--accent-primary);
+      box-shadow: inset 0 0 0 1px var(--accent-primary);
     }
 
-    button.bp-btn:focus-visible {
+    button.bp-btn:focus-visible,
+    button.theme-btn:focus-visible,
+    a:focus-visible {
       outline: 2px solid var(--accent-primary);
       outline-offset: 2px;
     }
@@ -302,7 +364,7 @@ const html = `<!DOCTYPE html>
       border-radius: 6px;
       display: grid;
       grid-template-columns: 200px 1fr;
-      background: #090d16;
+      background: var(--bg-canvas);
     }
 
     .shell-wireframe[data-bp="tablet"],
@@ -313,7 +375,7 @@ const html = `<!DOCTYPE html>
     .shell-nav {
       border-right: 1px solid var(--border-strong);
       padding: 14px;
-      background: #0f172a;
+      background: var(--bg-elevated);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -344,6 +406,8 @@ const html = `<!DOCTYPE html>
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
       background: var(--bg-surface);
       font-family: var(--font-mono);
       font-size: 0.8rem;
@@ -364,7 +428,7 @@ const html = `<!DOCTYPE html>
 
     .grid-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
     }
 
@@ -391,7 +455,7 @@ const html = `<!DOCTYPE html>
     }
 
     pre.ascii-box {
-      background: #070a10;
+      background: var(--bg-code);
       border: 1px solid var(--border-subtle);
       border-radius: 4px;
       padding: 10px;
@@ -457,6 +521,56 @@ const html = `<!DOCTYPE html>
       color: var(--accent-primary);
       font-weight: 700;
     }
+
+    footer.site-footer {
+      border-top: 1px solid var(--border-strong);
+      padding-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    footer.site-footer a {
+      color: var(--accent-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 6px;
+    }
+
+    footer.site-footer a:hover {
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding: 16px 12px 32px;
+      }
+      .container {
+        gap: 18px;
+      }
+      section.card {
+        padding: 14px;
+      }
+      .grid-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -474,14 +588,17 @@ const html = `<!DOCTYPE html>
           <span class="pill">touch &gt;= ${minTouchPx}px</span>
         </div>
       </div>
-      <div>
+      <div class="header-actions">
         <span class="pill ${lintReport.valid ? 'pill-pass' : 'pill-fail'}">
           Linter: ${lintReport.valid ? 'PASS' : 'FAIL'} (${lintReport.summary.errors} errors, ${lintReport.summary.warnings} warnings)
         </span>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-pressed="false" aria-label="Switch color theme">
+          Theme: Dark
+        </button>
       </div>
     </header>
 
-    <main style="display: flex; flex-direction: column; gap: 28px;">
+    <main style="display: flex; flex-direction: column; gap: 24px;">
       <section class="card" aria-labelledby="shell-heading">
         <h2 id="shell-heading">
           <span>1. Interactive App Shell &amp; Viewport Budget Simulator</span>
@@ -605,6 +722,11 @@ const html = `<!DOCTYPE html>
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <span>Generated by UX.md v1.0 Preview Engine</span>
+      <a href="https://github.com/SolidStateNetwork/ux.md">SolidStateNetwork/ux.md Repository</a>
+    </footer>
   </div>
 
   <script>
@@ -612,6 +734,7 @@ const html = `<!DOCTYPE html>
     const frame = document.getElementById('shell-frame');
     const readout = document.getElementById('shell-readout');
     const navLabel = document.getElementById('nav-label');
+    const themeBtn = document.getElementById('theme-toggle');
 
     const descriptions = {
       desktop: 'Desktop Budget (${desktopViewport}px): Left Nav ${leftNavPx}px + Right Panel ${rightPanelPx}px + Outer Padding ${outerPaddingPx}px + Min Content ${contentMinPx}px = ${leftNavPx + rightPanelPx + outerPaddingPx + contentMinPx}px',
@@ -633,6 +756,19 @@ const html = `<!DOCTYPE html>
         readout.textContent = descriptions[target];
         navLabel.textContent = navLabels[target];
       });
+    });
+
+    themeBtn.addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.setAttribute('aria-pressed', 'false');
+        themeBtn.textContent = 'Theme: Dark';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeBtn.setAttribute('aria-pressed', 'true');
+        themeBtn.textContent = 'Theme: Light';
+      }
     });
   </script>
 </body>

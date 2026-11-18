@@ -1,19 +1,21 @@
 # UX.md
 
 <p align="center">
-  <img src="assets/hero.svg" alt="UX.md: Structural UI/UX specification standard for AI coding agents" width="100%" />
+  <img src="./assets/hero.svg" alt="UX.md: Structural UI/UX specification, CLI linter, MCP server, and AI agent skill" width="100%" />
 </p>
 
 <p align="center">
   <a href="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml"><img src="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml/badge.svg" alt="UX.md Spec & Linter CI" /></a>
   <a href="docs/spec.md"><img src="https://img.shields.io/badge/Specification-v1.0-0284c7" alt="Spec v1.0" /></a>
   <a href="skills/ux-md-generator/SKILL.md"><img src="https://img.shields.io/badge/Agent_Skill-ux--md--generator-0f172a" alt="Agent Skill" /></a>
+  <a href="scripts/mcp-server.mjs"><img src="https://img.shields.io/badge/MCP_Server-stdio-0369a1" alt="MCP Server" /></a>
+  <a href="llms.txt"><img src="https://img.shields.io/badge/llms.txt-ready-1e293b" alt="llms.txt" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-334155" alt="MIT License" /></a>
 </p>
 
-`UX.md` is a format specification, zero-dependency CLI toolkit (extractor, generator, linter, HTML previewer, and diff engine), and installable AI agent skill for structural UI/UX architecture.
+`UX.md` is a structural UI/UX format specification, zero-dependency CLI toolkit (`extract`, `generate`, `validate`, `preview`, `diff`), Model Context Protocol (MCP) server, and installable AI agent skill.
 
-While `AGENTS.md` defines engineering rules and `DESIGN.md` defines visual tokens (the skin), `UX.md` defines the application skeleton and interaction rules: app shells, viewport budget math, scroll and z-index ownership, page archetypes, route reachability graphs, URL state persistence, 4-state view contracts, and mandatory layout primitives.
+While `AGENTS.md` defines engineering rules and `DESIGN.md` defines visual tokens (the skin), `UX.md` defines the application skeleton and interaction contracts: app shells, viewport budget math, scroll and z-index ownership, page archetypes, route reachability graphs, URL state persistence, 4-state view matrices, and mandatory code layout primitives.
 
 ---
 
@@ -27,9 +29,13 @@ Giving an AI coding agent a `DESIGN.md` ensures every screen uses the right colo
 
 | File standard | Role | What it governs |
 | :--- | :--- | :--- |
-| **`AGENTS.md`** | **Brain & governance** | Module boundaries, build/test commands, dependency rules, security constraints |
+| **`AGENTS.md`** | **Brain & governance** | Module boundaries, build and test commands, dependency rules, security constraints |
 | **`DESIGN.md`** | **Skin & visual tokens** | Color palette, typography scale, border radii, shadows, spacing units, motion curves |
 | **`UX.md`** | **Skeleton & behavior** | App shell geometry, page archetypes, route graph, modal vs. drawer thresholds, 4-state view matrix (`Loading / Empty / Error / Populated`), URL state persistence, and code layout primitives |
+
+<p align="center">
+  <img src="./assets/triad-workflow.svg" alt="UX.md three-phase pipeline: Phase 1 Extract, Phase 2 Synthesize, Phase 3 Enforce" width="100%" />
+</p>
 
 ---
 
@@ -43,43 +49,93 @@ Works with Claude Code, Antigravity / Gemini CLI, Cursor, OpenCode, OpenAI Codex
 npx skills add SolidStateNetwork/ux.md --skill ux-md-generator --copy -y
 ```
 
-### 2. CLI toolkit (`extract`, `generate`, `validate`, `preview`, `diff`)
+### 2. Run the zero-dependency CLI (`npx ux-md`)
 
-All five bundled scripts run on Node.js 20+ with zero external npm dependencies:
+All commands run on Node.js 20+ with zero external npm dependencies:
 
 ```bash
-# 1. Scan an existing repository (framework, DESIGN.md tokens, and source routes)
-node .agents/skills/ux-md-generator/scripts/extract-ux.mjs . --output ux-scan.json
+# 1. Initialize UX.md directly from an archetype or scan of the current repo
+npx ux-md init --archetype b2b-saas-workspace --project "Acme Workspace"
 
-# 2. Generate a 12-section UX.md from an archetype preset or scan file
-node .agents/skills/ux-md-generator/scripts/generate-ux.mjs --archetype b2b-saas-workspace --project "Acme Workspace" --output UX.md
+# 2. Scan an existing repository (framework, DESIGN.md tokens, and source routes)
+npx ux-md extract . --output ux-scan.json
 
-# 3. Validate UX.md against 11 linter rules + live source code route parity
-node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict --check-code
+# 3. Validate UX.md against 12 linter rules + live source code route parity
+npx ux-md validate UX.md --strict --check-code
 
 # 4. Render an interactive HTML wireframe & breakpoint simulator (1280px / 768px / 375px)
-node .agents/skills/ux-md-generator/scripts/preview-ux.mjs UX.md --output ux-preview.html
+npx ux-md preview UX.md --output ux-preview.html
 
 # 5. Diff two UX.md versions for route, budget, or threshold regressions
-node .agents/skills/ux-md-generator/scripts/diff-ux.mjs UX.old.md UX.md --json
+npx ux-md diff UX.old.md UX.md --json
 ```
 
-### 3. Prompt your AI coding agent
+*(If installed purely via `npx skills add`, each script is also directly callable under `node .agents/skills/ux-md-generator/scripts/<script>.mjs`.)*
 
-- **Synthesize (greenfield / `init`):**
-  > "Use `ux-md-generator` to generate a `UX.md` for our Next.js B2B billing workspace aligned with `AGENTS.md` and `DESIGN.md`."
-- **Extract from a reference product:**
-  > "Use `ux-md-generator` to create a `UX.md` modeled after Linear's keyboard-first workspace and slide-over inspector drawer."
-- **Audit and reverse-engineer existing code:**
-  > "Run `ux-md-generator` in audit mode across `src/app/` to unify our container widths, modal/drawer thresholds, and missing empty/error states into `UX.md`."
-- **Evolve when adding routes:**
-  > "Add the `/settings/webhooks` route to `UX.md` and validate it before implementing the page."
+### 3. Add the `UX.md` contract to `AGENTS.md` or `CLAUDE.md`
+
+Drop this block into your project's `AGENTS.md` or `CLAUDE.md` so every AI coding session checks structural rules before editing UI routes:
+
+```markdown
+## UI & UX Architecture Contract
+- Visual tokens (colors, typography, radii, shadows, spacing): see `DESIGN.md`.
+- Structural skeleton (app shell budget, page archetypes, route graph, modal vs. drawer thresholds, 4-state view matrix, and `<AppShell>` / `<PageHeader>` / `<PageSection>` / `<DataStateBoundary>` primitives): see `UX.md`.
+- Whenever adding or modifying UI routes, update `UX.md` and run `npx ux-md validate UX.md --strict --check-code`.
+```
+
+### 4. Connect the MCP server or GitHub Action
+
+#### Model Context Protocol (MCP) configuration (`.mcp.json` / Claude Desktop / Cursor)
+
+Exposes five deterministic tools (`ux_extract`, `ux_generate`, `ux_validate`, `ux_preview`, `ux_diff`) and the `UX.md` v1.0 specification resource over `stdio`:
+
+```json
+{
+  "mcpServers": {
+    "ux-md": {
+      "command": "npx",
+      "args": ["-y", "ux-md", "mcp"]
+    }
+  }
+}
+```
+
+#### GitHub Actions CI enforcement (`.github/workflows/ux.yml`)
+
+```yaml
+- name: Validate UX.md structural contract
+  uses: SolidStateNetwork/ux.md@main
+  with:
+    file: UX.md
+    strict: 'true'
+    check-code: 'true'
+```
+
+Add the validation badge to your project's README:
+
+```markdown
+[![UX.md Validated](https://img.shields.io/badge/UX.md-v1.0_Validated-0284c7)](https://github.com/SolidStateNetwork/ux.md)
+```
+
+---
+
+## Reference blueprints (5 core archetypes)
+
+Each blueprint in [`examples/`](examples/) passes all 12 rules in `validate-ux.mjs --strict` and can be rendered into an interactive HTML simulator via `npx ux-md preview`:
+
+| Example | Archetype | Key structural contracts |
+| :--- | :--- | :--- |
+| [`examples/b2b-saas-workspace/UX.md`](examples/b2b-saas-workspace/UX.md) | `b2b-saas-workspace` | Keyboard-first issue workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette |
+| [`examples/ai-chat-canvas/UX.md`](examples/ai-chat-canvas/UX.md) | `ai-chat-canvas` | Split-pane conversational thread with synchronized artifact code/preview stage (`?artifact=`) and streaming scroll-lock rules |
+| [`examples/analytics-dashboard/UX.md`](examples/analytics-dashboard/UX.md) | `analytics-dashboard` | Global URL-persisted time and environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer |
+| [`examples/ecommerce-storefront/UX.md`](examples/ecommerce-storefront/UX.md) | `ecommerce-storefront` | Faceted discovery catalog, `4:5` aspect-reserved media, slide-over cart drawer (`?cart=open`), and guest-first checkout funnel |
+| [`examples/developer-tool/UX.md`](examples/developer-tool/UX.md) | `developer-tool` | Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy checkmarks, and tier-2 slug-confirm modals |
 
 ---
 
 ## The `UX.md` v1 format (YAML frontmatter + 12 sections)
 
-Modeled on the hybrid structure of [Google's `DESIGN.md` specification](https://github.com/google-labs-code/design.md), `UX.md` pairs machine-verifiable YAML frontmatter with 12 ordered Markdown sections (see [`docs/spec.md`](docs/spec.md) and [`PHILOSOPHY.md`](PHILOSOPHY.md)):
+Modeled on the hybrid structure of [Google's `DESIGN.md` specification](https://github.com/google-labs-code/design.md), `UX.md` pairs machine-verifiable YAML frontmatter with 12 ordered Markdown sections (see [`docs/spec.md`](docs/spec.md), [`PHILOSOPHY.md`](PHILOSOPHY.md), and [`llms.txt`](llms.txt)):
 
 ```yaml
 ---
@@ -161,25 +217,26 @@ layout_primitives:
 
 ---
 
-## Reference examples (all 5 core archetypes)
-
-| Example | Archetype | Highlights |
-| :--- | :--- | :--- |
-| [`examples/b2b-saas-workspace/UX.md`](examples/b2b-saas-workspace/UX.md) | `b2b-saas-workspace` | Keyboard-first issue workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette |
-| [`examples/ai-chat-canvas/UX.md`](examples/ai-chat-canvas/UX.md) | `ai-chat-canvas` | Split-pane conversational thread with synchronized artifact code/preview stage (`?artifact=`) and streaming scroll-lock rules |
-| [`examples/analytics-dashboard/UX.md`](examples/analytics-dashboard/UX.md) | `analytics-dashboard` | Global URL-persisted time/environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer |
-| [`examples/ecommerce-storefront/UX.md`](examples/ecommerce-storefront/UX.md) | `ecommerce-storefront` | Faceted discovery catalog, `4:5` aspect-reserved media, slide-over Cart Drawer (`?cart=open`), and guest-first checkout funnel |
-| [`examples/developer-tool/UX.md`](examples/developer-tool/UX.md) | `developer-tool` | Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy checkmarks, and Tier-2 slug-confirm modals |
-
----
-
 ## Repository structure
 
 ```text
 ux.md/
-├── .github/workflows/validate.yml
+├── .github/workflows/
+│   ├── validate.yml
+│   └── pages.yml
+├── action.yml
+├── package.json
+├── llms.txt
 ├── README.md
 ├── PHILOSOPHY.md
+├── assets/
+│   ├── hero.svg
+│   └── triad-workflow.svg
+├── bin/
+│   └── ux-md.mjs
+├── scripts/
+│   ├── mcp-server.mjs
+│   └── build-showcase.mjs
 ├── docs/
 │   └── spec.md
 ├── examples/

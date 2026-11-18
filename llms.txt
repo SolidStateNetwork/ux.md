@@ -1,0 +1,45 @@
+# UX.md
+
+> UX.md is a format specification, zero-dependency CLI toolkit, Model Context Protocol (MCP) server, and AI agent skill for structural UI/UX architecture. While AGENTS.md defines engineering governance and DESIGN.md defines visual tokens (the skin), UX.md defines the application skeleton: app shells, viewport budget math, scroll and z-index ownership, page archetypes, route reachability graphs, URL state persistence, 4-state view contracts, and mandatory code layout primitives.
+
+## Quick Commands
+
+- Install as an AI agent skill (Claude Code, Cursor, Antigravity, OpenCode, Codex, Copilot):
+  `npx skills add SolidStateNetwork/ux.md --skill ux-md-generator --copy -y`
+- Scaffold a new `UX.md` via CLI:
+  `npx ux-md init --archetype b2b-saas-workspace --project "Acme Workspace"`
+- Scan an existing repository (framework, `DESIGN.md` tokens, `src/app` or `src/pages` routes):
+  `npx ux-md extract . --output ux-scan.json`
+- Validate `UX.md` against 12 structural linter rules and live source routes:
+  `npx ux-md validate UX.md --strict --check-code`
+- Render an interactive HTML wireframe and breakpoint simulator (`1280px` / `768px` / `375px`):
+  `npx ux-md preview UX.md --output ux-preview.html`
+- Diff two `UX.md` files for route, budget, or threshold regressions:
+  `npx ux-md diff UX.old.md UX.md --json`
+- Start the zero-dependency MCP server over stdio:
+  `npx ux-md mcp`
+
+## Recommended AGENTS.md / CLAUDE.md Integration Snippet
+
+Add this block to a project's `AGENTS.md` or `CLAUDE.md` so AI coding agents enforce structural UI consistency across sessions:
+
+```markdown
+## UI & UX Architecture Contract
+- Visual tokens (colors, typography, radii, shadows, spacing): see `DESIGN.md`.
+- Structural skeleton (app shell geometry, page archetypes, route reachability graph, modal vs. drawer thresholds, 4-state view contracts, and `<AppShell>` / `<PageHeader>` / `<PageSection>` / `<DataStateBoundary>` primitives): see `UX.md`.
+- Before adding or modifying UI routes, update `UX.md` and run `npx ux-md validate UX.md --strict --check-code`.
+```
+
+## Core Specification & Documentation
+
+- [Formal v1.0 Specification](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/docs/spec.md): YAML frontmatter schema, 12 canonical sections (`0` through `11`), and 12 automated linter rule definitions.
+- [Architectural Philosophy](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/PHILOSOPHY.md): Why visual tokens (`DESIGN.md`) alone fail to prevent multi-session layout drift.
+- [Agent Skill Instructions (`ux-md-generator`)](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/skills/ux-md-generator/SKILL.md): 4 operating modes (`Synthesize`, `Extract from reference`, `Audit existing code`, `Evolve`) and 3-phase pipeline.
+
+## Reference Blueprints (5 Core Archetypes)
+
+- [B2B SaaS Workspace](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/examples/b2b-saas-workspace/UX.md): Keyboard-first workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette.
+- [AI Chat & Artifact Canvas](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/examples/ai-chat-canvas/UX.md): Split-pane conversational thread with synchronized code/preview stage (`?artifact=`) and streaming scroll-lock rules.
+- [Analytics & Observability Dashboard](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/examples/analytics-dashboard/UX.md): URL-persisted time/environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer.
+- [E-Commerce Storefront](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/examples/ecommerce-storefront/UX.md): Faceted catalog, `4:5` aspect-reserved media, slide-over cart drawer (`?cart=open`), and guest-first checkout funnel.
+- [Developer Tool & Cloud Console](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/examples/developer-tool/UX.md): Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy feedback, and tier-2 slug confirmation modals.
