@@ -58,7 +58,7 @@ layout_primitives:
 
 ### `## 0. Product & Domain Topology`
 - **Core value loop:** 1 to 2 sentences tracing the primary user action from entry to completion.
-- **Auth and role boundary:** Explicit declaration (`Public`, `Single-User Authenticated`, or `Multi-Tenant RBAC with roles: [...]`) matching `.ai/01-architecture.md`.
+- **Auth and role boundary:** Explicit declaration (`Public`, `Single-User Authenticated`, or `Multi-Tenant RBAC with roles: [...]`).
 - **Platform profile:** Input modality (`Pointer + Keyboard First`, `Touch First`, or `Terminal Keyboard Only`).
 
 ### `## 1. Spatial Architecture & App Shell`
@@ -121,7 +121,7 @@ Table covering every view or archetype across all 4 required states:
 - **Keyboard and focus choreography:** Shortcuts (`Cmd/Ctrl+K`, `Esc`, `Enter`), initial auto-focus inside overlays, and focus restoration on close.
 
 ### `## 10. Mandatory Layout Primitives (Code Contract)`
-Table and code usage contract for the required wrapper components (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) registered in `.ai/05-patterns.md` and used by all pages.
+Table and code usage contract for the required wrapper components (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) used across all pages.
 
 ### `## 11. Project Do's, Don'ts & Agent Prompt Guide`
 - **Do's and Don'ts:** Minimum 5 concrete `DO` and 5 concrete `DON'T` rules where each rule includes a specific metric, component name, or state condition.

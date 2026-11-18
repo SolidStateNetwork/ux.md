@@ -2,7 +2,7 @@
 
 A `UX.md` specification prevents UI drift only when every route in the codebase is built from shared layout primitives rather than ad-hoc `<div className="flex max-w-6xl p-6 ...">` wrappers.
 
-Every generated `UX.md` (Section 10) defines the project's four core layout primitives and synchronizes their reference implementation into `.ai/05-patterns.md` (when present).
+Every generated `UX.md` (Section 10) defines the project's four core layout primitives and their required props contract.
 
 ---
 

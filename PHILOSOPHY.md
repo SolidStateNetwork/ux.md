@@ -44,7 +44,7 @@ Whenever fixed panels plus minimum content width exceed a breakpoint, `UX.md` de
 Every interactive element and route in an interface is a contract with the user. `UX.md` enforces two structural invariants:
 
 1. **Bi-directional route reachability:** Every route in the route graph maps to a named page archetype, declares at least one entry trigger (sidebar, command palette, row action), and declares an explicit exit or cancel fallback.
-2. **No ghost controls:** Controls without a backing route or handler (`href="#"`, `onClick={() => {}}`) are forbidden. Unbuilt roadmap features are either omitted from the DOM or rendered as `disabled` with a tooltip stating the target milestone.
+2. **No ghost controls:** Controls without a backing route or handler (`href="#"`, `onClick={() => {}}`) are forbidden. Unimplemented features are either omitted from the DOM or rendered as `disabled` with a tooltip explaining why.
 
 ---
 

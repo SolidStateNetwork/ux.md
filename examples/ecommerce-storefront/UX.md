@@ -43,7 +43,7 @@ layout_primitives:
 # UX.md: High-Conversion E-Commerce Storefront & Cart Funnel
 
 ## 0. Product & Domain Topology
-- **Core value loop:** Shoppers browse faceted product catalogs (`/collections/:slug`), configure variants on product showcase pages (`/products/:handle`), inspect their order in a non-blocking slide-over Cart Drawer (`?cart=open`), and complete purchase in a distraction-free single-column checkout (`/checkout`).
+- **Core value loop:** Shoppers browse faceted product catalogs (`/collections/:slug`), configure variants on product detail pages (`/products/:handle`), inspect their order in a non-blocking slide-over Cart Drawer (`?cart=open`), and complete purchase in a distraction-free single-column checkout (`/checkout`).
 - **Auth and role boundary:** Public guest browsing and guest checkout by default; optional authenticated customer account history (`/account/orders`).
 - **Platform profile:** `web-app` (`window` document scroll with sticky `64px` top header and touch-first mobile ergonomics).
 

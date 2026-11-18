@@ -27,7 +27,8 @@ function readTextIfExists(filePath) {
 }
 
 const pkg = readJsonIfExists(path.join(rootDir, 'package.json'));
-const archMd = readTextIfExists(path.join(rootDir, '.ai', '01-architecture.md'));
+const readmeMd = readTextIfExists(path.join(rootDir, 'README.md'));
+const agentsMd = readTextIfExists(path.join(rootDir, 'AGENTS.md'));
 const designMd = readTextIfExists(path.join(rootDir, 'DESIGN.md'));
 
 const deps = {
@@ -57,7 +58,7 @@ if (deps['react-native'] || deps['expo']) {
   framework = 'react-spa';
 }
 
-const combinedContext = `${pkg?.name || ''} ${pkg?.description || ''} ${archMd}`.toLowerCase();
+const combinedContext = `${pkg?.name || ''} ${pkg?.description || ''} ${readmeMd.slice(0, 1000)} ${agentsMd.slice(0, 1000)}`.toLowerCase();
 let inferredArchetype = 'b2b-saas-workspace';
 
 if (/\b(?:chat|llm|prompt|artifact|assistant|streaming|canvas|ai)\b/.test(combinedContext)) {
@@ -136,11 +137,7 @@ function scanRoutes(baseRoot) {
   return Array.from(routes).sort();
 }
 
-const projectNameFromArch = archMd.match(/-\s+\*\*Project Name:\*\*\s+`?([^`\r\n]+)`?/)?.[1]?.trim();
-const resolvedProjectName =
-  projectNameFromArch && projectNameFromArch !== '[PROJECT_NAME]'
-    ? projectNameFromArch
-    : pkg?.name || path.basename(rootDir);
+const resolvedProjectName = pkg?.name || path.basename(rootDir);
 
 const scanResult = {
   project: resolvedProjectName,

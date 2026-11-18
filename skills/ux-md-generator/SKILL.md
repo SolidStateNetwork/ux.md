@@ -26,10 +26,10 @@ This skill operates across four modes using a three-phase pipeline backed by fiv
 
 | Script | Purpose | Example Usage |
 | :--- | :--- | :--- |
-| `scripts/extract-ux.mjs` | Scans `package.json`, `.ai/01-architecture.md`, `DESIGN.md`, and source routes (`src/app`, `src/pages`) into structured JSON | `node .agents/skills/ux-md-generator/scripts/extract-ux.mjs . --output ux-scan.json` |
+| `scripts/extract-ux.mjs` | Scans `package.json`, `AGENTS.md`, `DESIGN.md`, and source routes (`src/app`, `src/pages`) into structured JSON | `node .agents/skills/ux-md-generator/scripts/extract-ux.mjs . --output ux-scan.json` |
 | `scripts/generate-ux.mjs` | Scaffolds a 12-section `UX.md` from an archetype preset or `ux-scan.json` | `node .agents/skills/ux-md-generator/scripts/generate-ux.mjs --archetype b2b-saas-workspace --project "Acme" --output UX.md` |
 | `scripts/validate-ux.mjs` | Runs 11 deterministic linter rules plus optional `--check-code` route parity verification | `node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict --check-code` |
-| `scripts/preview-ux.mjs` | Generates a standalone, responsive `ux-preview.html` interactive blueprint simulator | `node .agents/skills/ux-md-generator/scripts/preview-ux.mjs UX.md --output ux-preview.html` |
+| `scripts/preview-ux.mjs` | Generates a standalone, responsive `ux-preview.html` interactive wireframe simulator | `node .agents/skills/ux-md-generator/scripts/preview-ux.mjs UX.md --output ux-preview.html` |
 | `scripts/diff-ux.mjs` | Compares two `UX.md` files for route, archetype, budget, or threshold regressions | `node .agents/skills/ux-md-generator/scripts/diff-ux.mjs UX.old.md UX.md --json` |
 
 ---
@@ -37,7 +37,7 @@ This skill operates across four modes using a three-phase pipeline backed by fiv
 ## Operating modes
 
 1. **Synthesize (greenfield / `init`):**
-   Runs `extract-ux.mjs` + `generate-ux.mjs` to scaffold the initial `UX.md` from `.ai/01-architecture.md` and `DESIGN.md`, then customizes the routes, archetypes, and domain rules.
+   Runs `extract-ux.mjs` + `generate-ux.mjs` to scaffold the initial `UX.md` from the project context and `DESIGN.md`, then customizes the routes, archetypes, and domain rules.
 2. **Extract from reference (reference product or URL):**
    Extracts the spatial shell, interaction rules, keyboard shortcuts, and page archetypes from a named reference product (for example Linear, ChatGPT Canvas, Stripe Dashboard, Shopify, or Supabase).
 3. **Audit and reverse-engineer (existing codebase):**
@@ -51,7 +51,7 @@ This skill operates across four modes using a three-phase pipeline backed by fiv
 
 ### Phase 1: Deterministic extraction and archetype classification
 
-1. Run `node .agents/skills/ux-md-generator/scripts/extract-ux.mjs .` (or inspect `.ai/01-architecture.md` and `DESIGN.md` directly) to detect the target runtime, authentication boundary, existing routes, and `DESIGN.md` breakpoints.
+1. Run `node .agents/skills/ux-md-generator/scripts/extract-ux.mjs .` (or inspect `package.json`, `AGENTS.md`, and `DESIGN.md` directly) to detect the target runtime, authentication boundary, existing routes, and `DESIGN.md` breakpoints.
 2. Load [resources/archetype-taxonomy.md](resources/archetype-taxonomy.md) and confirm:
    - `platform_profile`: `web-app` | `mobile-native` | `desktop-app` | `terminal-tui`
    - `archetype`: `b2b-saas-workspace` | `ai-chat-canvas` | `analytics-dashboard` | `ecommerce-storefront` | `developer-tool`
@@ -82,7 +82,7 @@ Load [resources/ux-md-format.md](resources/ux-md-format.md), [resources/layout-p
 **Writing constraints:**
 - **Zero vague adjectives:** Do not write *"small form"*, *"clean layout"*, *"slow request"*, or *"intuitive navigation"* without explicit numbers (`<= 4 fields`, `1280px`, `>= 150ms`). See [resources/anti-patterns.md](resources/anti-patterns.md).
 - **Zero dead ends:** Every route in Section 4 references a valid `<ArchetypeID>` from Section 3 and defines both an `Entry Trigger` and an `Exit / Cancel Fallback`.
-- **Sync layout primitives:** When `.ai/05-patterns.md` exists in the repository, register the 4 mandatory layout primitives (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) there so implementation tasks enforce them in code.
+- **Enforce layout primitives:** Ensure all routes compose the 4 mandatory layout primitives (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) defined in Section 10.
 
 ### Phase 3: Cross-audit and machine validation
 

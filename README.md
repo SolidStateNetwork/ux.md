@@ -67,7 +67,7 @@ node .agents/skills/ux-md-generator/scripts/diff-ux.mjs UX.old.md UX.md --json
 ### 3. Prompt your AI coding agent
 
 - **Synthesize (greenfield / `init`):**
-  > "Use `ux-md-generator` to generate a `UX.md` for our Next.js B2B billing workspace aligned with `.ai/01-architecture.md` and `DESIGN.md`."
+  > "Use `ux-md-generator` to generate a `UX.md` for our Next.js B2B billing workspace aligned with `AGENTS.md` and `DESIGN.md`."
 - **Extract from a reference product:**
   > "Use `ux-md-generator` to create a `UX.md` modeled after Linear's keyboard-first workspace and slide-over inspector drawer."
 - **Audit and reverse-engineer existing code:**

@@ -69,7 +69,7 @@ Sections appear in sequential order (`0` through `11`):
 
 | Section heading | Required content |
 | :--- | :--- |
-| `## 0. Product & Domain Topology` | Target user workflow loop, authentication boundary (`Public`, `Authenticated`, `Multi-Tenant RBAC`), and platform profile constraints aligned with `.ai/01-architecture.md`. |
+| `## 0. Product & Domain Topology` | Target user workflow loop, authentication boundary (`Public`, `Authenticated`, `Multi-Tenant RBAC`), and platform profile constraints. |
 | `## 1. Spatial Architecture & App Shell` | ASCII wireframe of the persistent application frame, zone dimensions (`px`/`rem`), and verified viewport budget calculation (`Fixed Panels + Padding + Content Min <= 1280px`). |
 | `## 2. Scroll, Viewport & Z-Index Contract` | Primary scroll container ownership, sticky header/footer rules, zero-layout-shift (`CLS = 0`) reservations, and the monotonic Z-Index layer table. |
 | `## 3. Core Page Archetypes (Blueprints)` | 3 to 5 named screen templates (for example `ListIndex`, `WorkspaceDetail`, `FocusedForm`). Each archetype includes an ASCII layout box, zone slots, and fixed primary CTA coordinates. |

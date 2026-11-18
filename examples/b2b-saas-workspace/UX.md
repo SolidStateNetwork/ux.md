@@ -211,7 +211,7 @@ flowchart LR
 
 ## 10. Mandatory Layout Primitives (Code Contract)
 
-Every route file under `src/` composes these four shared layout primitives (documented in `.ai/05-patterns.md`):
+Every route file under `src/` composes these four shared layout primitives:
 
 | Primitive | Required Usage | Forbidden Bypass |
 | :--- | :--- | :--- |

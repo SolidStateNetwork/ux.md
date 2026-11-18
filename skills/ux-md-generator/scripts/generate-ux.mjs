@@ -110,7 +110,7 @@ layout_primitives:
 
 ## 0. Product & Domain Topology
 - **Core value loop:** Users navigate primary collections in the main workspace, inspect or mutate records inside a slide-over drawer (\`?inspect=<id>\`), and complete configuration tasks in focused single-column views.
-- **Auth and role boundary:** Authenticated workspace aligned with \`.ai/01-architecture.md\`.
+- **Auth and role boundary:** Authenticated multi-user workspace with role-based permissions.
 - **Platform profile:** \`web-app\` (\`Pointer + Keyboard First\` with touch parity below \`1024px\`).
 
 ## 1. Spatial Architecture & App Shell
