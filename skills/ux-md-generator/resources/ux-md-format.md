@@ -1,19 +1,19 @@
 # UX.md v1 Section-by-Section Format Reference
 
-Use this exact structure when generating or updating a project's `UX.md`. Never omit a section and never leave `[TBD]` or `TODO` placeholders.
+Use this structure when generating or updating a project's `UX.md`. Include every section in order and never leave `[TBD]` or `TODO` placeholders.
 
 ---
 
-## Frontmatter Template
+## Frontmatter template
 
 ```yaml
 ---
 spec_version: "1.0"
 project: "<Project Name>"
-platform_profile: "web-app"          # web-app | mobile-native | desktop-app | terminal-tui
-archetype: "<archetype-slug>"        # b2b-saas-workspace | ai-chat-canvas | analytics-dashboard | ecommerce-storefront | content-docs | developer-tool
-token_source: "DESIGN.md"            # DESIGN.md (if present) | standalone
-scroll_owner: "inner-canvas"         # window | inner-canvas | split-pane
+platform_profile: "web-app"
+archetype: "<archetype-slug>"
+token_source: "DESIGN.md"
+scroll_owner: "inner-canvas"
 breakpoints:
   mobile_max: 767
   tablet_max: 1023
@@ -54,74 +54,75 @@ layout_primitives:
 
 ---
 
-## Section Structure Requirements
+## Section structure requirements
 
 ### `## 0. Product & Domain Topology`
-- **Core Value Loop:** 1–2 sentences tracing the primary user action from entry to completion.
-- **Auth & Role Boundary:** Explicit declaration (`Public`, `Single-User Authenticated`, or `Multi-Tenant RBAC with roles: [...]`). Must match `.ai/01-architecture.md`.
-- **Platform Profile:** Input modality (`Pointer + Keyboard First`, `Touch First`, or `Terminal Keyboard Only`).
+- **Core value loop:** 1 to 2 sentences tracing the primary user action from entry to completion.
+- **Auth and role boundary:** Explicit declaration (`Public`, `Single-User Authenticated`, or `Multi-Tenant RBAC with roles: [...]`) matching `.ai/01-architecture.md`.
+- **Platform profile:** Input modality (`Pointer + Keyboard First`, `Touch First`, or `Terminal Keyboard Only`).
 
 ### `## 1. Spatial Architecture & App Shell`
-- **ASCII App-Shell Diagram:** Visual box diagram showing persistent regions (`Topbar`, `Sidebar`, `Main Canvas`, `Inspector/Drawer` slot) with exact pixel/percentage dimensions.
-- **Viewport Budget Proof Table:**
+- **ASCII app-shell diagram:** Box diagram showing persistent regions (`Topbar`, `Sidebar`, `Main Canvas`, `Inspector/Drawer` slot) with exact pixel or percentage dimensions.
+- **Viewport budget proof table:**
   | Breakpoint | Fixed Chrome (`px`) | Outer Padding (`px`) | Available Content Width (`px`) | Collapse Action |
   | :--- | :--- | :--- | :--- | :--- |
 
 ### `## 2. Scroll, Viewport & Z-Index Contract`
-- **Scroll Ownership:** Explicitly state which single DOM region scrolls vertically and forbid nested full-height vertical scrollbars.
-- **Sticky Regions:** Which headers, filter bars, or action footers remain pinned during scroll.
-- **CLS Protection:** Mandatory geometry reservation for async blocks, images, and charts.
-- **Z-Index Table:** Markdown table matching `z_index_scale` from frontmatter.
+- **Scroll ownership:** State which single DOM region scrolls vertically and forbid nested full-height vertical scrollbars.
+- **Sticky regions:** State which headers, filter bars, or action footers remain pinned during scroll, and specify reserved scroll padding for fixed bars so content is never covered.
+- **CLS protection:** Require fixed geometry reservations for async blocks, images, and charts.
+- **Z-Index table:** Markdown table matching `z_index_scale` from frontmatter.
 
 ### `## 3. Core Page Archetypes (Blueprints)`
-Define 3 to 5 named archetypes. Every archetype MUST use the heading format `### Archetype: <ArchetypeID>` (e.g., `### Archetype: ListIndex`, `### Archetype: WorkspaceDetail`, `### Archetype: FocusedForm`) so the linter can cross-reference routes in Section 4.
+Define 3 to 5 named archetypes. Use the heading format `### Archetype: <ArchetypeID>` (for example `### Archetype: ListIndex`, `### Archetype: WorkspaceDetail`, `### Archetype: FocusedForm`) so the linter can cross-reference routes in Section 4.
 For each archetype include:
-- **Purpose & Max-Width**
-- **ASCII Wireframe**
-- **Primary CTA Position & Action Target**
+- **Purpose and max-width**
+- **ASCII wireframe**
+- **Primary CTA position and action target**
 
 ### `## 4. Navigation, Route Graph & URL Persistence`
-1. **Mermaid Route Topology:** A `flowchart LR` diagram showing how routes and overlays connect.
-2. **Route Reachability Table (Mandatory Columns):**
+1. **Mermaid route topology:** A `flowchart LR` diagram showing how routes and overlays connect.
+2. **Route reachability table (required columns):**
    | Route | Archetype | Entry Trigger | Primary Action | Exit / Cancel Fallback |
    | :--- | :--- | :--- | :--- | :--- |
-   *(Note: The `Archetype` column must exactly match an `<ArchetypeID>` defined in Section 3.)*
-3. **State Persistence Matrix (The F5 / Back-Button Contract):**
+   *(The `Archetype` column must match an `<ArchetypeID>` defined in Section 3.)*
+3. **State persistence matrix (`F5` and Browser `Back` contract):**
    | State Category | Storage Location (`URL Query` / `LocalStorage` / `Ephemeral Memory`) | Parameter / Key Example | Reset Trigger |
    | :--- | :--- | :--- | :--- |
 
 ### `## 5. Overlay & Feedback Decision Matrix`
 Table mapping interaction patterns (`Modal`, `Slide-Over Drawer`, `Popover / Menu`, `Inline Edit`, `Dedicated Route`, `Toast`, `System Banner`) with:
-- **Trigger Condition & Max Field Count**
+- **Trigger condition and max field count**
 - **Dimensions (`px`)**
-- **Dismiss Behavior (`Esc`, Backdrop click, Dirty-Form lock)**
+- **Dismiss behavior (`Esc`, backdrop click, dirty-form lock)**
 
 ### `## 6. Mandatory View States (4-State Matrix)`
-Table covering every view/archetype across all 4 required states:
+Table covering every view or archetype across all 4 required states:
 | View / Component | `Loading` (Skeleton Geometry) | `Empty` (Copy + Primary CTA) | `Error` (Message + Retry Action) | `Populated` (Density & Overflow) |
 | :--- | :--- | :--- | :--- | :--- |
 
 ### `## 7. Mutation, Form & Permission Ergonomics`
-- **Form Validation Timing:** When errors appear and when they clear.
-- **Submit & Optimistic UI Policy:** Button locking, inline spinner width preservation, and optimistic list updates.
-- **Dirty-State Guard (`isDirty`):** Protection against accidental backdrop click or `Esc` dismissal when form inputs have unsaved edits.
-- **Destructive Action Tiers:** Tier 1 (Reversible -> Instant + Undo Toast `4000ms`) vs. Tier 2 (Irreversible -> Confirmation Modal with explicit impact statement).
-- **Permission & Entitlement Gates:** `Role-Restricted` (Hide), `Prerequisite-Restricted` (Disable + Tooltip), `Plan-Restricted` (Visible Lock Badge + Upgrade Popover).
+- **Form validation timing:** When errors appear and when they clear.
+- **Submit and optimistic UI policy:** Button locking, inline spinner width preservation, and optimistic list updates.
+- **Dirty-state guard (`isDirty`):** Protection against accidental backdrop click or `Esc` dismissal when form inputs have unsaved edits.
+- **Destructive action tiers:** Tier 1 (reversible: instant execution plus Undo Toast `4000ms`) vs. Tier 2 (irreversible: Confirmation Modal with explicit impact statement).
+- **Permission and entitlement gates:** `Role-Restricted` (hide), `Prerequisite-Restricted` (disable plus tooltip), `Plan-Restricted` (visible lock badge plus upgrade popover).
 
 ### `## 8. Real-Data Stress, Density & Truncation`
-- **Collection Scaling:** Choose ONE consistent mechanism per collection type (`Cursor Pagination`, `Page-Number Pagination`, `Virtualized Infinite Scroll`).
-- **Text Overflow Rules:** Single-line (`truncate` + tooltip after `N` chars) vs. multi-line (`line-clamp-2`).
-- **Missing / Null Data Fallback:** Consistent placeholder token (`—`, never literal `null`, `undefined`, or `N/A`).
-- **Numeric & Temporal Alignment:** `tabular-nums`, right-aligned numeric columns, ISO/relative date threshold.
+- **Collection scaling:** Choose one consistent mechanism per collection type (`Cursor Pagination`, `Page-Number Pagination`, `Virtualized Infinite Scroll`).
+- **Text overflow rules:** Single-line (`min-w-0 truncate` plus tooltip/tap reveal after `N` chars) vs. multi-line (`line-clamp-2`).
+- **Missing or null data fallback:** Consistent placeholder string (`-` or em-dash token, never literal `null`, `undefined`, or `N/A`).
+- **Numeric and temporal alignment:** `tabular-nums`, right-aligned numeric columns, and ISO/relative date threshold.
 
 ### `## 9. Responsive Reflow & Input Choreography`
-- **Breakpoint Collapse Sequence:** Exact structural transformation at `1280px`, `1024px`, `768px`, and `375px`.
-- **Table & Data Grid Reflow:** How wide tables transform below `768px` (e.g., stacked summary card with top 3 fields + detail drawer trigger).
-- **Keyboard & Focus Choreography:** First-class shortcuts (`Cmd/Ctrl+K`, `Esc`, `Enter`), initial auto-focus inside overlays, and focus return on close.
+- **Breakpoint collapse sequence:** Structural transformation across `1280px`, `1024px`, `768px`, and `375px` (including tablet and small-laptop states, not just desktop and phone).
+- **Table and data grid reflow:** How wide tables transform below `768px` (for example stacked summary card with top 3 fields and detail drawer trigger) with zero horizontal scroll leak.
+- **Touch targets and hover parity:** Minimum `44x44px` tap area with `>= 8px` spacing between adjacent targets; every hover-only reveal or tooltip requires a tap/keyboard equivalent.
+- **Keyboard and focus choreography:** Shortcuts (`Cmd/Ctrl+K`, `Esc`, `Enter`), initial auto-focus inside overlays, and focus restoration on close.
 
 ### `## 10. Mandatory Layout Primitives (Code Contract)`
-Table and code usage contract for the required wrapper components (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) that must be registered in `.ai/05-patterns.md` and used by all pages.
+Table and code usage contract for the required wrapper components (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) registered in `.ai/05-patterns.md` and used by all pages.
 
 ### `## 11. Project Do's, Don'ts & Agent Prompt Guide`
-- **Do's & Don'ts:** Minimum 5 concrete `DO` and 5 concrete `DON'T` rules passing the Counter-Intuitive Test (each rule must include a specific metric, component name, or state condition).
-- **Pre-Commit Agent Checklist:** 5-point self-audit before completing any frontend task.
+- **Do's and Don'ts:** Minimum 5 concrete `DO` and 5 concrete `DON'T` rules where each rule includes a specific metric, component name, or state condition.
+- **Pre-commit agent checklist:** 5-point self-audit before completing any frontend task.

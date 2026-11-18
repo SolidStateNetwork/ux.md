@@ -42,12 +42,12 @@ layout_primitives:
   - "DataStateBoundary"
 ---
 
-# UX.md — AI Chat & Artifact Split-Canvas Workspace
+# UX.md: AI Chat & Artifact Split-Canvas Workspace
 
 ## 0. Product & Domain Topology
-- **Core Value Loop:** Users converse with an AI assistant in a streaming thread while inspecting, editing, and exporting generated code/document artifacts in a synchronized side-by-side canvas pane (`?artifact=<id>`).
-- **Auth & Role Boundary:** Single-User Authenticated Workspace with shareable read-only public snapshot links (`/share/:snapshotId`).
-- **Platform Profile:** `web-app` (`split-pane` desktop choreography collapsing to tab-switched panes below `1024px`).
+- **Core value loop:** Users converse with an AI assistant in a streaming thread while inspecting, editing, and exporting generated code or document artifacts in a synchronized side-by-side canvas pane (`?artifact=<id>`).
+- **Auth and role boundary:** Single-User Authenticated Workspace with shareable read-only public snapshot links (`/share/:snapshotId`).
+- **Platform profile:** `web-app` (`split-pane` desktop choreography collapsing to tab-switched panes below `1024px`).
 
 ## 1. Spatial Architecture & App Shell
 
@@ -67,13 +67,13 @@ layout_primitives:
 | Breakpoint | Fixed Chrome (`px`) | Outer Padding (`px`) | Available Content Width (`px`) | Collapse Action |
 | :--- | :--- | :--- | :--- | :--- |
 | `>= 1280px` (Desktop) | `260px` (Rail) + `520px` (Artifact) | `32px` | `468px` Chat (`>= 420px` min) | When Artifact Canvas opens, Thread Rail auto-collapses to `0px` below `1280px` to preserve split-pane budget. |
-| `1024px – 1279px` (Small Laptop) | `0px` (Rail in overlay) + `520px` (Artifact) | `32px` | `472px – 727px` Chat | Thread Rail collapses into off-canvas drawer (`260px`); Chat + Artifact remain side-by-side. |
-| `<= 1023px` (Tablet & Mobile) | `0px` | `24px` | Full single pane | Artifact Canvas converts into a full-screen Bottom Sheet / Segmented Tab (`[Chat] | [Artifact (1)]`). |
+| `1024px to 1279px` (Small Laptop) | `0px` (Rail in overlay) + `520px` (Artifact) | `32px` | `472px to 727px` Chat | Thread Rail collapses into off-canvas drawer (`260px`) via labeled `Threads` button; Chat and Artifact remain side-by-side. |
+| `<= 1023px` (Tablet & Mobile) | `0px` | `24px` | Full single pane | Artifact Canvas converts into a full-screen Bottom Sheet or Segmented Tab (`[Chat] | [Artifact (1)]`). |
 
 ## 2. Scroll, Viewport & Z-Index Contract
-- **Scroll Ownership:** `split-pane` — The outer shell is locked (`h-dvh overflow-hidden`); the Message Stream Pane and the Artifact Canvas Pane each own one independent vertical scroll container.
-- **Auto-Scroll & Scroll-Lock Break:** During token streaming, the Message Stream auto-scrolls to the bottom ONLY while the user is within `48px` of the bottom edge. Any upward wheel/touch scroll immediately disengages auto-scroll and reveals a floating `[Jump to Bottom]` pill at `z-index: 10`.
-- **CLS Protection:** Artifact pill cards inside the chat stream reserve a fixed `64px` height so opening or streaming an artifact never shifts message history.
+- **Scroll ownership:** `split-pane` locks the outer shell (`h-dvh overflow-hidden`) while the Message Stream Pane and the Artifact Canvas Pane each own one independent vertical scroll container.
+- **Auto-scroll and scroll-lock break:** During token streaming, the Message Stream auto-scrolls to the bottom while the user is within `48px` of the bottom edge. Any upward wheel or touch scroll immediately disengages auto-scroll and reveals a floating `[Jump to Bottom]` pill at `z-index: 10`.
+- **CLS protection:** Artifact pill cards inside the chat stream reserve a fixed `64px` height so opening or streaming an artifact never shifts message history.
 
 | Layer Name | Z-Index | Assigned Components |
 | :--- | :--- | :--- |
@@ -89,8 +89,8 @@ layout_primitives:
 ## 3. Core Page Archetypes (Blueprints)
 
 ### Archetype: PromptStreamCanvas
-- **Purpose & Max-Width:** Dual-pane conversational workspace (`max-w: 768px` centered message column when artifact closed; `flex-1` split when artifact open).
-- **Primary CTA Position:** Sticky bottom prompt composer `Send / Stop Generation` button (`Enter` to send, `Shift+Enter` for newline, `Esc` to abort active stream).
+- **Purpose and max-width:** Dual-pane conversational workspace (`max-w: 768px` centered message column when artifact closed; `flex-1` split when artifact open).
+- **Primary CTA position:** Sticky bottom prompt composer `Send / Stop Generation` button (`Enter` to send, `Shift+Enter` for newline, `Esc` to abort active stream).
 ```text
 +----------------------------------------+------------------------------------+
 | Model: Claude 3.7  [Share]             | Artifact: schema.sql [Code|Preview]|
@@ -103,8 +103,8 @@ layout_primitives:
 ```
 
 ### Archetype: HistoryLibrary
-- **Purpose & Max-Width:** Searchable archive of past threads and generated artifacts (`max-w: 1024px`).
-- **Primary CTA Position:** Top-right slot of `<PageHeader>` (`+ New Thread`).
+- **Purpose and max-width:** Searchable archive of past threads and generated artifacts (`max-w: 1024px`).
+- **Primary CTA position:** Top-right slot of `<PageHeader>` (`+ New Thread`).
 ```text
 +--------------------------------------------------------------------+
 | Thread & Artifact Library                          [+ New Thread]  |
@@ -117,8 +117,8 @@ layout_primitives:
 ```
 
 ### Archetype: FocusedSettings
-- **Purpose & Max-Width:** Single-column custom instructions, API keys, and memory controls (`max-w: 640px`).
-- **Primary CTA Position:** Sticky bottom-right action bar (`Save Preferences`).
+- **Purpose and max-width:** Single-column custom instructions, API keys, and memory controls (`max-w: 640px`).
+- **Primary CTA position:** Sticky bottom-right action bar (`Save Preferences`).
 ```text
 +--------------------------------------------------+
 | Workspace Settings / Custom Instructions         |
@@ -149,7 +149,7 @@ flowchart LR
 | `/settings` | `FocusedSettings` | User menu `Settings` or `Cmd+,` | Save custom instructions / keys | Discard unsaved changes and return to `/c/:threadId` |
 | `/share/:snapshotId` | `PromptStreamCanvas` | External public deep link | Fork thread into own workspace (`[Fork Thread]`) | Navigate to `/library` |
 
-### State Persistence Matrix (F5 & Back-Button Contract)
+### State persistence matrix (`F5` and Back-button contract)
 
 | State Category | Storage Location | Parameter / Key Example | Reset Trigger |
 | :--- | :--- | :--- | :--- |
@@ -163,43 +163,44 @@ flowchart LR
 
 | Pattern | Trigger Condition & Field Limit | Dimensions | Dismiss & Dirty-State Behavior |
 | :--- | :--- | :--- | :--- |
-| `Artifact Split Pane` | Inspecting or editing code/document output (`> 15 lines`) alongside chat | `width: 520px – 55%` on desktop; `92vh` Bottom Sheet `< 1024px` | Closing removes `?artifact=` URL param; prompts if manual code edits are unsaved (`isDirty`) |
+| `Artifact Split Pane` | Inspecting or editing code/document output (`> 15 lines`) alongside chat | `width: 520px to 55%` on desktop; `92vh` Bottom Sheet `< 1024px` | Closing removes `?artifact=` URL param; prompts if manual code edits are unsaved (`isDirty`) |
 | `Centered Modal` | Creating public share link or Tier-2 thread deletion (`<= 4` fields) | `max-w: 480px` | `Esc` or backdrop click closes when `isDirty === false` |
 | `Popover Menu` | Switching AI model, temperature, or uploading file attachments | `width: 260px`, `max-h: 340px` | Closes on selection, `Esc`, or outside click |
-| `Inline Checkmark` | Copying code block or message markdown to clipboard | Inline inside button (`2000ms` duration) | Replaces copy icon with checkmark for `2000ms` (never fires a toast for code copy) |
+| `Inline Checkmark` | Copying code block or message markdown to clipboard | Inline inside button (`2000ms` duration) | Replaces copy icon with checkmark for `2000ms` (does not fire a toast for code copy) |
 | `Auto-Dismiss Toast` | Thread archived with `[Undo]` or public snapshot link generated | `width: 340px`, bottom-right | Auto-dismisses after `4000ms` |
 
 ## 6. Mandatory View States (4-State Matrix)
 
 | View / Component | `Loading` (Skeleton Geometry) | `Empty` (Copy + Primary CTA) | `Error` (Message + Retry Action) | `Populated` (Density & Overflow) |
 | :--- | :--- | :--- | :--- | :--- |
-| `/c/:threadId` (`PromptStreamCanvas`) | **Initial Load:** 3 alternating message skeletons (`72px` and `140px`). **Streaming State:** Live token append + pulsing cursor + `[Stop Generating]` button | Centered starter stage (`max-w: 640px`): greeting + 3 clickable starter prompt cards + focused composer | Inline assistant error bubble preserving partial streamed output + `[Regenerate Response]` button (user prompt is never lost) | `768px` max message measure (`65ch`), sticky code block headers, `64px` artifact trigger cards |
+| `/c/:threadId` (`PromptStreamCanvas`) | **Initial load:** 3 alternating message skeletons (`72px` and `140px`). **Streaming state:** Live token append, pulsing cursor, and `[Stop Generating]` button | Centered starter stage (`max-w: 640px`): greeting, 3 clickable starter prompt cards, and focused composer | Inline assistant error bubble preserving partial streamed output + `[Regenerate Response]` button (user prompt is retained) | `768px` max message measure (`65ch`), sticky code block headers, `64px` artifact trigger cards |
 | `/library` (`HistoryLibrary`) | 8 row skeletons (`56px` height) matching title, artifact badge, and timestamp columns (`CLS = 0`) | Centered `420px` container: *"No threads or artifacts found."* + `[+ Start New Thread]` CTA | Inline error card with `[Retry Load]` button | Cursor-paginated list (`25 rows/page`), title `truncate` at `52 chars` |
 | `/settings` (`FocusedSettings`) | 3 form card skeletons (`120px` height each) inside `640px` column | Custom instructions textarea shows concrete placeholder example | Persistent inline banner above form + field-level error message | Auto-expanding textarea (`min-h: 140px`, `max-h: 420px`) with character counter |
 
 ## 7. Mutation, Form & Permission Ergonomics
-- **Prompt Submission & Streaming Lock:** Pressing `Enter` immediately appends the user message to the stream, saves a backup draft until ACKed, and transforms the `Send` button into a `[Stop]` button (`Esc` or click aborts stream without deleting partial tokens).
-- **Dirty-State Guard (`isDirty`):** Unsent prompt text is auto-persisted per thread in `localStorage` (`ux.draft_prompt.<threadId>`). In `/settings` or manual Artifact code edits, `isDirty === true` blocks navigation and backdrop close until confirmed.
-- **Destructive Action Tiers:**
-  - **Tier 1 (Archive Thread):** Instant optimistic removal from Thread Rail + `4000ms` Toast with `[Undo]`.
-  - **Tier 2 (Delete Thread Permanently / Revoke Share Link):** `480px` Confirmation Modal stating that associated artifacts and public snapshot links will stop working immediately.
-- **Permission & Entitlement Gates:**
-  - **Read-Only Snapshot (`/share/:snapshotId`):** Hide Settings/Rail navigation; replace bottom prompt composer with a sticky `[Fork Thread to Continue Chatting]` CTA bar.
-  - **Prerequisite-Restricted (Empty prompt or file still uploading):** Render `Send` button `disabled` with tooltip (*"Wait for attachment upload to finish"*).
-  - **Plan-Restricted (Pro Reasoning Model):** Show model in selector with `Pro` lock badge; selecting opens an inline upgrade popover.
+- **Prompt submission and streaming lock:** Pressing `Enter` appends the user message to the stream, saves a backup draft until acknowledged, and switches the `Send` button into a `[Stop]` button (`Esc` or click aborts stream without deleting partial tokens).
+- **Dirty-state guard (`isDirty`):** Unsent prompt text auto-persists per thread in `localStorage` (`ux.draft_prompt.<threadId>`). In `/settings` or manual Artifact code edits, `isDirty === true` blocks navigation and backdrop close until confirmed.
+- **Destructive action tiers:**
+  - **Tier 1 (archive thread):** Instant optimistic removal from Thread Rail + `4000ms` Toast with `[Undo]`.
+  - **Tier 2 (delete thread permanently, revoke share link):** `480px` Confirmation Modal stating that associated artifacts and public snapshot links will stop working immediately.
+- **Permission and entitlement gates:**
+  - **Read-only snapshot (`/share/:snapshotId`):** Hide Settings and Rail navigation; replace bottom prompt composer with a sticky `[Fork Thread to Continue Chatting]` CTA bar.
+  - **Prerequisite-restricted (empty prompt or file uploading):** Render `Send` button `disabled` with tooltip (*"Wait for attachment upload to finish"*).
+  - **Plan-restricted (Pro reasoning model):** Show model in selector with `Pro` lock badge; selecting opens an inline upgrade popover.
 
 ## 8. Real-Data Stress, Density & Truncation
-- **Collection Scaling:** Thread Rail loads top `30` recent threads with virtualized scroll on expansion; `/library` uses cursor pagination (`25 items/page`).
-- **Text & Code Overflow Rules:** Thread titles in the `260px` rail enforce `min-w-0 truncate` (1 line). Code blocks inside chat messages never wrap by default (`overflow-x-auto`) and cap vertical height at `420px` before collapsing into an Artifact card.
-- **Missing / Null Data Fallback:** Threads without an artifact render `—` in the `/library` artifact column.
-- **Numeric & Temporal Alignment:** Token counts, latency (`ms`), version numbers (`v1`, `v2`), and timestamps enforce `tabular-nums`.
+- **Collection scaling:** Thread Rail loads top `30` recent threads with virtualized scroll on expansion; `/library` uses cursor pagination (`25 items/page`).
+- **Text and code overflow rules:** Thread titles in the `260px` rail enforce `min-w-0 truncate` (1 line). Code blocks inside chat messages scroll horizontally (`overflow-x-auto`) and cap vertical height at `420px` before collapsing into an Artifact card.
+- **Missing or null data fallback:** Threads without an artifact render `-` in the `/library` artifact column.
+- **Numeric and temporal alignment:** Token counts, latency (`ms`), version numbers (`v1`, `v2`), and timestamps enforce `tabular-nums`.
 
 ## 9. Responsive Reflow & Input Choreography
-- **Breakpoint Collapse Sequence:**
-  1. `< 1280px`: Opening the right Artifact Canvas automatically collapses the left `260px` Thread Rail so Chat (`>= 420px`) and Artifact (`520px`) never crush each other.
+- **Breakpoint collapse sequence:**
+  1. `< 1280px`: Opening the right Artifact Canvas collapses the left `260px` Thread Rail so Chat (`>= 420px`) and Artifact (`520px`) fit without horizontal overflow.
   2. `< 1024px`: Side-by-side split pane collapses into a single active viewport with a top segmented toggle (`[Chat] | [Artifact]`) or slide-up Bottom Sheet (`92vh`).
-  3. `< 768px`: Prompt composer docks to `env(safe-area-inset-bottom)` with automatic visual-viewport keyboard avoidance; all touch targets enforce `>= 44x44px`.
-- **Keyboard & Focus Choreography:**
+  3. `< 768px`: Prompt composer docks to `env(safe-area-inset-bottom)` with automatic visual-viewport keyboard avoidance and reserves bottom scroll padding on the message stream; all touch targets enforce `>= 44x44px` with `>= 8px` gap.
+- **Hover parity on touch:** Message action bars (`Copy`, `Edit`, `Regenerate`) remain persistently visible below the latest assistant message on touch viewports rather than requiring cursor hover.
+- **Keyboard and focus choreography:**
   - `/` or `Cmd+J` focuses the prompt composer from anywhere; `Esc` stops active generation or closes the Artifact pane.
 
 ## 10. Mandatory Layout Primitives (Code Contract)
@@ -213,19 +214,19 @@ flowchart LR
 
 ## 11. Project Do's, Don'ts & Agent Prompt Guide
 
-### Do's & Don'ts (Counter-Intuitive Threshold Rules)
+### Do's and Don'ts (threshold rules)
 - **DO** auto-collapse the `260px` left Thread Rail whenever the `520px` Artifact Canvas opens on viewports `< 1280px`.
 - **DO** disengage chat auto-scroll immediately if the user scrolls up by more than `48px` during token streaming, and show a `[Jump to Bottom]` button.
 - **DO** preserve both the user's submitted prompt and any partially streamed tokens when a network or LLM error occurs, offering an inline `[Regenerate]` button.
 - **DO** synchronize the open artifact ID and version (`?artifact=art_1&v=2`) in the URL query string.
 - **DO** use a `2000ms` inline checkmark icon inside the `Copy Code` button instead of firing a toast notification.
-- **DON'T** clear the prompt composer input before the message is safely committed to the local thread state.
+- **DON'T** clear the prompt composer input before the message is committed to the thread state.
 - **DON'T** render side-by-side split panes below `1024px` viewport width.
-- **DON'T** allow long code blocks (`> 30 lines`) to bloat the main chat column when Artifact mode is enabled — extract them into the Artifact Canvas and render a `64px` trigger card.
+- **DON'T** allow long code blocks (`> 30 lines`) to expand the main chat column when Artifact mode is enabled; extract them into the Artifact Canvas and render a `64px` trigger card.
 - **DON'T** auto-dismiss stream or API error messages.
 - **DON'T** allow `Esc` or backdrop clicks to discard unsaved manual edits inside the Artifact code editor (`isDirty === true`).
 
-### Pre-Commit Agent Checklist
+### Pre-commit agent checklist
 1. Does the view use `<AppShell>`, `<PageHeader>`, `<PageSection>`, and `<DataStateBoundary>`?
 2. Does opening the Artifact Canvas keep both Chat (`>= 420px`) and Artifact (`>= 520px`) within the `1280px` viewport budget?
 3. Are `Loading / Streaming`, `Empty`, `Error (with partial token retention)`, and `Populated` states handled?

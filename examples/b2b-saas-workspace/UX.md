@@ -40,12 +40,12 @@ layout_primitives:
   - "DataStateBoundary"
 ---
 
-# UX.md — Linear-Style B2B Issue Workspace
+# UX.md: Linear-Style B2B Issue Workspace
 
 ## 0. Product & Domain Topology
-- **Core Value Loop:** Engineers triage incoming issues in a keyboard-navigable list, inspect or mutate issue properties inside a non-blocking slide-over drawer (`?inspect=<id>`), and track cycle velocity.
-- **Auth & Role Boundary:** Multi-Tenant RBAC (`Owner`, `Admin`, `Member`, `Viewer`). Workspace slug is scoped in the root route (`/:workspaceSlug/...`).
-- **Platform Profile:** `web-app` (`Pointer + Keyboard First` with full `Cmd/Ctrl+K` command palette coverage).
+- **Core value loop:** Engineers triage incoming issues in a keyboard-navigable list, inspect or mutate issue properties inside a non-blocking slide-over drawer (`?inspect=<id>`), and track cycle velocity.
+- **Auth and role boundary:** Multi-Tenant RBAC (`Owner`, `Admin`, `Member`, `Viewer`). Workspace slug is scoped in the root route (`/:workspaceSlug/...`).
+- **Platform profile:** `web-app` (`Pointer + Keyboard First` with `Cmd/Ctrl+K` command palette coverage and touch parity below `1024px`).
 
 ## 1. Spatial Architecture & App Shell
 
@@ -66,14 +66,14 @@ layout_primitives:
 
 | Breakpoint | Fixed Chrome (`px`) | Outer Padding (`px`) | Available Content Width (`px`) | Collapse Action |
 | :--- | :--- | :--- | :--- | :--- |
-| `>= 1280px` (Desktop) | `240px` (Left Nav) | `48px` (`24px` x 2) | `992px` (`>= 720px` min) | Full persistent left rail; Inspector opens as `540px` right overlay drawer. |
-| `768px – 1023px` (Tablet) | `0px` (Nav collapsed) | `32px` (`16px` x 2) | `736px – 991px` | Left Nav collapses into an off-canvas sheet (`260px`) triggered via topbar button or `[` shortcut. |
-| `<= 767px` (Mobile) | `0px` (Bottom Bar `56px`) | `24px` (`12px` x 2) | `351px – 743px` | Left Nav moves to 4-item Bottom Bar + Sheet; Slide-Over Drawer becomes a `92vh` Bottom Sheet. |
+| `>= 1280px` (Desktop) | `240px` (Left Nav) | `48px` (`24px` x 2) | `992px` (`>= 720px` min) | Persistent left rail; Inspector opens as `540px` right overlay drawer. |
+| `768px to 1023px` (Tablet) | `0px` (Nav collapsed) | `32px` (`16px` x 2) | `736px to 991px` | Left Nav collapses into an off-canvas sheet (`260px`) triggered via labeled `Menu` button or `[` shortcut. |
+| `<= 767px` (Mobile) | `0px` (Bottom Bar `56px`) | `24px` (`12px` x 2) | `351px to 743px` | Left Nav moves to 4-item Bottom Bar (`56px` height with `pb-14` + `env(safe-area-inset-bottom)` reserved on canvas); Slide-Over Drawer becomes a `92vh` Bottom Sheet. |
 
 ## 2. Scroll, Viewport & Z-Index Contract
-- **Scroll Ownership:** `inner-canvas` owns the single vertical scrollbar (`h-dvh overflow-hidden` on outer shell, `flex-1 overflow-y-auto` on main canvas). Nested full-height vertical scrollbars inside pages are prohibited.
-- **Sticky Regions:** `<PageHeader>` (`48px`) and active filter bar (`40px`) stick to the top of `inner-canvas` at `z-index: 10`.
-- **CLS Protection:** Every row list reserves `40px` per row during loading; metric header strips reserve `96px` height.
+- **Scroll ownership:** `inner-canvas` owns the single vertical scrollbar (`h-dvh overflow-hidden` on outer shell, `flex-1 overflow-y-auto` on main canvas). Nested full-height vertical scrollbars inside pages are prohibited.
+- **Sticky regions:** `<PageHeader>` (`48px`) and active filter bar (`40px`) stick to the top of `inner-canvas` at `z-index: 10`.
+- **CLS protection:** Every row list reserves `40px` per row during loading; metric header strips reserve `96px` height.
 
 | Layer Name | Z-Index | Assigned Components |
 | :--- | :--- | :--- |
@@ -82,15 +82,15 @@ layout_primitives:
 | `navigation` | `20` | Fixed left sidebar, mobile bottom bar, system status banner |
 | `drawer` | `30` | Right slide-over inspector drawer (`540px`), mobile navigation sheet |
 | `modal` | `40` | Centered command palette (`640px`), Tier-2 destructive confirm modal (`480px`) |
-| `popover` | `50` | Priority/Assignee comboboxes, date pickers, context menus (renders above modals/drawers) |
+| `popover` | `50` | Priority/Assignee comboboxes, date pickers, context menus (renders above modals and drawers) |
 | `toast` | `60` | Bottom-right action undo toasts (`4000ms`) |
 | `tooltip` | `70` | Keyboard shortcut hints and truncated text tooltips |
 
 ## 3. Core Page Archetypes (Blueprints)
 
 ### Archetype: ListIndex
-- **Purpose & Max-Width:** High-density filterable list or table view (`max-w: 1280px`, `40px` row height).
-- **Primary CTA Position:** Top-right slot of `<PageHeader>` (`+ New Issue`, shortcut `C`).
+- **Purpose and max-width:** High-density filterable list or table view (`max-w: 1280px`, `40px` row height).
+- **Primary CTA position:** Top-right slot of `<PageHeader>` (`+ New Issue`, shortcut `C`).
 ```text
 +--------------------------------------------------------------------+
 | Breadcrumb / View Title                    [Filter] [+ New Issue]  |
@@ -103,8 +103,8 @@ layout_primitives:
 ```
 
 ### Archetype: WorkspaceDetail
-- **Purpose & Max-Width:** Full-screen entity editor with asymmetric 2-column split (`max-w: 1280px`).
-- **Primary CTA Position:** Top-right slot of `<PageHeader>` (`State Transition / Merge`).
+- **Purpose and max-width:** Full-screen entity editor with asymmetric 2-column split (`max-w: 1280px`).
+- **Primary CTA position:** Top-right slot of `<PageHeader>` (`State Transition / Merge`).
 ```text
 +--------------------------------------------------------------------+
 | Projects / Core API / ENG-104              [Copy Link] [In Review] |
@@ -117,8 +117,8 @@ layout_primitives:
 ```
 
 ### Archetype: FocusedForm
-- **Purpose & Max-Width:** Single-column settings and configuration view (`max-w: 640px`, centered or left-aligned within canvas).
-- **Primary CTA Position:** Sticky bottom-right form action bar (`Save Changes` + `Discard`).
+- **Purpose and max-width:** Single-column settings and configuration view (`max-w: 640px`).
+- **Primary CTA position:** Sticky bottom-right form action bar (`Save Changes` and `Discard`).
 ```text
 +--------------------------------------------------+
 | Workspace Settings / Webhooks                    |
@@ -151,7 +151,7 @@ flowchart LR
 | `/:workspace/issues/:id` | `WorkspaceDetail` | Row double-click or `Enter` on focused row | Update status / post comment | Return to `/:workspace/issues` preserving URL filter query |
 | `/:workspace/settings` | `FocusedForm` | Sidebar `Settings` or `Cmd+,` | Save workspace configuration | Discard edits and return to `/:workspace/issues` |
 
-### State Persistence Matrix (F5 & Back-Button Contract)
+### State persistence matrix (`F5` and Back-button contract)
 
 | State Category | Storage Location | Parameter / Key Example | Reset Trigger |
 | :--- | :--- | :--- | :--- |
@@ -165,10 +165,10 @@ flowchart LR
 
 | Pattern | Trigger Condition & Field Limit | Dimensions | Dismiss & Dirty-State Behavior |
 | :--- | :--- | :--- | :--- |
-| `Centered Modal` | Quick creation or Tier-2 destructive confirmation (`<= 4` fields, zero internal scroll) | `max-w: 480px` (`640px` for `Cmd+K` palette) | `Esc` or backdrop click closes ONLY if `isDirty === false`; prompts discard confirm if dirty |
-| `Slide-Over Drawer` | Entity preview/editing (`5 to 12` fields) while keeping parent list visible (`?inspect=id`) | `width: 540px`, full viewport height `100dvh` | `Esc` or close button removes `?inspect` query param; intercepts close if form `isDirty === true` |
-| `Dedicated Route` | Complex workflows (`> 12` fields), full markdown editing, or settings sections | Full archetype canvas (`max-w: 640px` or `1280px`) | Router navigation guard prompts on unsaved changes |
-| `Popover / Combobox` | Single-property mutation (Status, Priority, Assignee, Date) | `width: 220px – 280px`, `max-h: 320px` | Closes immediately on selection, `Esc`, or outside click |
+| `Centered Modal` | Quick creation or Tier-2 destructive confirmation (`<= 4` fields, zero internal scroll) | `max-w: 480px` (`640px` for `Cmd+K` palette) | `Esc` or backdrop click closes when `isDirty === false`; prompts discard confirm if dirty |
+| `Slide-Over Drawer` | Entity preview and editing (`5 to 12` fields) while keeping parent list visible (`?inspect=id`) | `width: 540px`, full viewport height `100dvh` | `Esc` or close button removes `?inspect` query param; intercepts close if form `isDirty === true` |
+| `Dedicated Route` | Multi-section workflows (`> 12` fields), full markdown editing, or settings sections | Full archetype canvas (`max-w: 640px` or `1280px`) | Router navigation guard prompts on unsaved changes |
+| `Popover / Combobox` | Single-property mutation (Status, Priority, Assignee, Date) | `width: 220px to 280px`, `max-h: 320px` | Closes immediately on selection, `Esc`, or outside click |
 | `Auto-Dismiss Toast` | Background confirmation or Tier-1 reversible action with `Undo` button | `width: 360px`, bottom-right (`16px` offset) | Auto-dismisses after `4000ms`; pauses timer on hover |
 | `Inline / Banner Error` | Form validation failure, network outage, or 4xx/5xx mutation error | Inline under field or full-width top banner | Persistent (never auto-dismisses); clears immediately when user edits offending field |
 
@@ -176,65 +176,66 @@ flowchart LR
 
 | View / Component | `Loading` (Skeleton Geometry) | `Empty` (Copy + Primary CTA) | `Error` (Message + Retry Action) | `Populated` (Density & Overflow) |
 | :--- | :--- | :--- | :--- | :--- |
-| `/:workspace/issues` (`ListIndex`) | 10 shimmer rows (`40px` height each) matching ID, title, badge, and date column widths (`CLS = 0`) | Centered `420px` block: *"No issues match your active filters."* + `[Reset Filters]` or `[+ Create First Issue]` CTA | Inline alert card inside canvas with error code + `[Retry Fetch]` button | `40px` compact rows, `25 rows/page` cursor pagination, title `truncate` with tooltip > `48 chars` |
+| `/:workspace/issues` (`ListIndex`) | 10 shimmer rows (`40px` height each) matching ID, title, badge, and date column widths (`CLS = 0`) | Centered `420px` block: *"No issues match your active filters."* + `[Reset Filters]` or `[+ Create First Issue]` CTA | Inline alert card inside canvas with error code + `[Retry Fetch]` button | `40px` compact rows, `25 rows/page` cursor pagination, title `truncate` with tooltip/tap reveal > `48 chars` |
 | `/:workspace/cycles` (`ListIndex`) | 3 cycle summary cards (`96px` height) + 8 issue rows (`40px` height) | Centered `420px` block: *"No active cycle scheduled."* + `[Create Cycle]` CTA | Inline alert card with `[Retry Fetch]` button | Velocity progress bar + grouped issue rows |
-| `/:workspace/issues/:id` (`WorkspaceDetail`) | Two-column skeleton: `32px` title bar + `160px` body block on left; 6 property rows (`36px`) on right | Sub-issues & comments render inline empty prompt: *"No comments yet — press M to add one."* | Full section error banner with `[Reload Issue]` + `[Back to Issues]` links | Markdown body with code block horizontal scroll; sticky `300px` right metadata rail |
+| `/:workspace/issues/:id` (`WorkspaceDetail`) | Two-column skeleton: `32px` title bar + `160px` body block on left; 6 property rows (`36px`) on right | Sub-issues and comments render inline empty prompt: *"No comments yet. Press M to add one."* | Full section error banner with `[Reload Issue]` + `[Back to Issues]` links | Markdown body with code block horizontal scroll; sticky `300px` right metadata rail |
 | `/:workspace/settings` (`FocusedForm`) | 4 input-shaped skeleton blocks (`64px` height each) within `640px` container | Webhook list empty state: *"No webhooks configured."* + `[+ Add Endpoint]` button | Persistent top form alert explaining failed fields + `[Retry Save]` | Grouped fieldsets (`24px` gap) with sticky save/discard footer when `isDirty === true` |
 
 ## 7. Mutation, Form & Permission Ergonomics
-- **Validation Timing:** Validate on `submit` and field `blur`; clear field error state immediately on `onChange` once valid.
-- **Submit Locking & Optimistic UI:** Primary submit buttons lock (`disabled + aria-busy="true"`) during flight while preserving exact button width with a `16px` inline spinner. Status/Assignee changes apply optimistically and roll back with a persistent error banner if the request fails.
-- **Dirty-State Guard (`isDirty`):** When any form input in a Modal, Drawer, or `FocusedForm` differs from initial state, backdrop click and `Esc` trigger an inline confirmation (`"Discard unsaved changes?" [Keep Editing] [Discard]`).
-- **Destructive Action Tiers:**
-  - **Tier 1 (Reversible — Archive Issue, Remove Label):** Executes immediately with an optimistic UI update and a `4000ms` bottom-right Toast containing an `[Undo]` button.
-  - **Tier 2 (Irreversible — Delete Workspace, Revoke API Secret):** Opens a `480px` Confirmation Modal stating the exact resource name and permanent impact; primary destructive button uses semantic danger styling.
-- **Permission & Entitlement Gates:**
-  - **Role-Restricted (`Viewer` vs `Admin`):** Hide destructive and settings-mutation controls completely (`null`).
-  - **Prerequisite-Restricted (Form incomplete):** Render button `disabled` with a hover tooltip stating the missing requirement (e.g., *"Enter a valid HTTPS webhook URL to save"*).
-  - **Plan-Restricted (Enterprise feature):** Render control visible with a `Lock` badge; clicking opens an upgrade explanation popover rather than throwing a `403` error.
+- **Validation timing:** Validate on `submit` and field `blur`; clear field error state immediately on `onChange` once valid.
+- **Submit locking and optimistic UI:** Primary submit buttons lock (`disabled + aria-busy="true"`) during flight while preserving button width with a `16px` inline spinner. Status and Assignee changes apply optimistically and roll back with a persistent error banner if the request fails.
+- **Dirty-state guard (`isDirty`):** When any form input in a Modal, Drawer, or `FocusedForm` differs from initial state, backdrop click and `Esc` trigger an inline confirmation (`"Discard unsaved changes?" [Keep Editing] [Discard]`).
+- **Destructive action tiers:**
+  - **Tier 1 (reversible: archive issue, remove label):** Executes immediately with an optimistic UI update and a `4000ms` bottom-right Toast containing an `[Undo]` button.
+  - **Tier 2 (irreversible: delete workspace, revoke API secret):** Opens a `480px` Confirmation Modal stating the resource name and permanent impact; primary destructive button uses semantic danger styling.
+- **Permission and entitlement gates:**
+  - **Role-restricted (`Viewer` vs `Admin`):** Hide destructive and settings-mutation controls completely (`null`).
+  - **Prerequisite-restricted (form incomplete):** Render button `disabled` with a tooltip stating the missing requirement (for example *"Enter a valid HTTPS webhook URL to save"*).
+  - **Plan-restricted (Enterprise feature):** Render control visible with a `Lock` badge; clicking opens an upgrade explanation popover rather than throwing a `403` error.
 
 ## 8. Real-Data Stress, Density & Truncation
-- **Collection Scaling:** Cursor-based pagination (`25 items` per page) synced to `?cursor=` across all `ListIndex` views. Never mix infinite scroll and numbered pagination.
-- **Text Overflow Rules:** Table and list row titles enforce `min-w-0 flex-1 truncate` (1 line) with full text revealed via tooltip after `350ms` hover. Card descriptions use `line-clamp-2`.
-- **Missing / Null Data Fallback:** Unassigned fields render `—` (em-dash) in muted text color. Never render literal `null`, `undefined`, or `N/A`.
-- **Numeric & Temporal Alignment:** Issue numbers, counts, durations, and dates enforce `font-variant-numeric: tabular-nums` and right-alignment in table columns. Dates `< 7 days` render relative (`"3h ago"`); `>= 7 days` render `YYYY-MM-DD` with full ISO timestamp in tooltip.
+- **Collection scaling:** Cursor-based pagination (`25 items` per page) synced to `?cursor=` across all `ListIndex` views. Do not mix infinite scroll and numbered pagination.
+- **Text overflow rules:** Table and list row titles enforce `min-w-0 flex-1 truncate` (1 line) with full text revealed via tooltip after `350ms` hover or via tap into the inspector drawer on touch devices. Card descriptions use `line-clamp-2`.
+- **Missing or null data fallback:** Unassigned fields render `-` in muted text color. Never render literal `null`, `undefined`, or `N/A`.
+- **Numeric and temporal alignment:** Issue numbers, counts, durations, and dates enforce `font-variant-numeric: tabular-nums` and right-alignment in table columns. Dates `< 7 days` render relative (`"3h ago"`); `>= 7 days` render `YYYY-MM-DD` with full ISO timestamp on hover/focus.
 
 ## 9. Responsive Reflow & Input Choreography
-- **Breakpoint Collapse Sequence:**
+- **Breakpoint collapse sequence:**
   1. `< 1280px`: Inspector Drawer overlays canvas (`z-30`) instead of pushing content width.
-  2. `< 1024px`: Fixed `240px` Left Sidebar collapses into an off-canvas Drawer Sheet (`260px`).
-  3. `< 768px`: Multi-column data rows collapse into stacked 2-line summary cards (`Row 1: ID + Title`, `Row 2: Status Badge + Priority + Assignee Avatar`); all interactive touch targets enforce `>= 44x44px`.
-- **Keyboard & Focus Choreography:**
+  2. `< 1024px`: Fixed `240px` Left Sidebar collapses into an off-canvas Drawer Sheet (`260px`) opened by a labeled `Menu` button.
+  3. `< 768px`: Multi-column data rows collapse into stacked 2-line summary cards (`Row 1: ID + Title`, `Row 2: Status Badge + Priority + Assignee Avatar`) with zero horizontal overflow; all interactive touch targets enforce `>= 44x44px` with `>= 8px` gap between adjacent controls.
+- **Hover parity on touch:** Row-level quick actions that appear on hover on desktop are accessible via a persistent `More (...)` tap button (`44x44px`) or inside the inspector drawer on touch screens.
+- **Keyboard and focus choreography:**
   - `Cmd/Ctrl+K` opens Command Palette from any screen; `C` opens Quick Create Issue Modal (when no input is focused).
-  - Opening any Modal or Drawer traps focus inside and auto-focuses the first interactive input; closing restores focus to the exact trigger element.
+  - Opening any Modal or Drawer traps focus inside and auto-focuses the first interactive input; closing restores focus to the trigger element.
 
 ## 10. Mandatory Layout Primitives (Code Contract)
 
-Every route file under `src/` must compose these 4 shared layout primitives (documented in `.ai/05-patterns.md`):
+Every route file under `src/` composes these four shared layout primitives (documented in `.ai/05-patterns.md`):
 
 | Primitive | Required Usage | Forbidden Bypass |
 | :--- | :--- | :--- |
-| `<AppShell>` | Wraps all authenticated workspace routes; manages `240px` sidebar, mobile sheet, and `inner-canvas` scroll. | Writing custom `h-screen overflow-auto` or duplicate sidebar wrappers inside page files. |
+| `<AppShell>` | Wraps all authenticated workspace routes; manages `240px` sidebar, mobile sheet, safe-area padding, and `inner-canvas` scroll. | Writing custom `h-screen overflow-auto` or duplicate sidebar wrappers inside page files. |
 | `<PageHeader>` | First child of every route; renders breadcrumbs, title, and top-right `primaryAction`. | Placing page titles or primary creation CTAs inside raw `<div>` headers or below tables. |
 | `<PageSection>` | Enforces `max-w: 1280px` (`ListIndex` / `WorkspaceDetail`) or `max-w: 640px` (`FocusedForm`) and `24px` padding. | Using arbitrary container widths (`max-w-4xl`, `max-w-5xl`, `w-[900px]`) on individual pages. |
-| `<DataStateBoundary>` | Wraps every async query region; requires `skeleton`, `emptyState`, and `errorState` props. | Using early `if (isLoading) return <p>Loading...</p>` or rendering tables without empty/error handlers. |
+| `<DataStateBoundary>` | Wraps every async query region; requires `skeleton`, `emptyState`, and `errorState` props. | Using early `if (isLoading) return <p>Loading...</p>` or rendering tables without empty and error handlers. |
 
 ## 11. Project Do's, Don'ts & Agent Prompt Guide
 
-### Do's & Don'ts (Counter-Intuitive Threshold Rules)
-- **DO** keep all filter, tab, sort, and drawer inspection (`?inspect=id`) state in URL query parameters so pressing `F5` or sharing the URL reproduces the exact view.
-- **DO** use the `540px` Slide-Over Drawer for inspecting or editing items with `5 to 12` fields so the user never loses their scroll position in `ListIndex`.
-- **DO** enforce `min-w-0 truncate` on flex/grid text children and `tabular-nums` on every numeric/ID column.
+### Do's and Don'ts (threshold rules)
+- **DO** keep all filter, tab, sort, and drawer inspection (`?inspect=id`) state in URL query parameters so pressing `F5` or sharing the URL reproduces the view.
+- **DO** use the `540px` Slide-Over Drawer for inspecting or editing items with `5 to 12` fields so the user retains their scroll position in `ListIndex`.
+- **DO** enforce `min-w-0 truncate` on flex/grid text children and `tabular-nums` on every numeric and ID column.
 - **DO** intercept `Esc` and backdrop clicks whenever a modal or drawer form has `isDirty === true`.
 - **DO** suppress loading indicators for cached reads completing in `< 150ms` and use row-matched shimmer skeletons (`40px` row height) for requests `>= 150ms`.
 - **DON'T** open a centered Modal for any form exceeding `4` input fields or requiring vertical scrolling inside the modal body.
-- **DON'T** auto-dismiss error messages in toasts; all validation and server errors must persist inline or in a top banner until resolved.
+- **DON'T** auto-dismiss error messages in toasts; all validation and server errors persist inline or in a top banner until resolved.
 - **DON'T** render ghost buttons (`onClick={() => {}}` or `href="#"`) for unbuilt features.
 - **DON'T** introduce a second full-height vertical scrollbar inside `inner-canvas`.
-- **DON'T** render literal `null`, `undefined`, or `N/A` in data cells (always use `—`).
+- **DON'T** render literal `null`, `undefined`, or `N/A` in data cells (always use `-`).
 
-### Pre-Commit Agent Checklist
-1. Does the new/modified view compose `<AppShell>`, `<PageHeader>`, `<PageSection>`, and `<DataStateBoundary>`?
+### Pre-commit agent checklist
+1. Does the new or modified view compose `<AppShell>`, `<PageHeader>`, `<PageSection>`, and `<DataStateBoundary>`?
 2. Is the route registered in Section 4 of `UX.md` with a valid Section 3 `Archetype`, `Entry Trigger`, and `Exit / Cancel Fallback`?
 3. Are all 4 states (`Loading`, `Empty`, `Error`, `Populated`) implemented with `CLS = 0` geometry?
 4. Do filters, tabs, and open detail drawers survive a browser refresh (`F5`) and `Back` button press?

@@ -22,7 +22,6 @@ if (!fs.existsSync(targetPath)) {
 const raw = fs.readFileSync(targetPath, 'utf8');
 const lines = raw.split(/\r?\n/);
 
-// 1. Parse Frontmatter
 const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
 const frontmatterText = fmMatch ? fmMatch[1] : '';
 
@@ -56,7 +55,6 @@ function extractFmNumber(key) {
   return m ? Number(m[1]) : null;
 }
 
-// 2. Check Canonical Sections & Order
 const CANONICAL_SECTIONS = [
   { num: 0, pattern: /^##\s+0\.\s+Product\s*&\s*Domain\s+Topology/i, title: '0. Product & Domain Topology' },
   { num: 1, pattern: /^##\s+1\.\s+Spatial\s+Architecture\s*&\s*App\s+Shell/i, title: '1. Spatial Architecture & App Shell' },
@@ -93,7 +91,6 @@ for (let i = 1; i < foundSectionIndices.length; i++) {
   }
 }
 
-// 3. Viewport Budget Math Check (viewport-overflow)
 if (fmMatch) {
   const desktopViewport = extractFmNumber('desktop_viewport') ?? 1280;
   const leftNav = extractFmNumber('left_nav_px') ?? 0;
@@ -116,7 +113,6 @@ if (fmMatch) {
   }
 }
 
-// 4. Z-Index Monotonic Scale Check (z-index-collision)
 if (fmMatch) {
   const zOrder = ['base', 'sticky', 'navigation', 'drawer', 'modal', 'popover', 'toast', 'tooltip'];
   let prevVal = -Infinity;
@@ -131,7 +127,7 @@ if (fmMatch) {
         addFinding(
           'z-index-collision',
           'error',
-          `Z-index collision or inversion: "${key}" (${val}) must be strictly greater than "${prevKey}" (${prevVal}).`,
+          `Z-index collision or inversion: "${key}" (${val}) must be greater than "${prevKey}" (${prevVal}).`,
           'frontmatter.z_index_scale'
         );
       }
@@ -141,7 +137,6 @@ if (fmMatch) {
   }
 }
 
-// Helper to get text slice of a section
 function getSectionText(sectionNum) {
   const current = foundSectionIndices.find((s) => s.num === sectionNum);
   if (!current) return '';
@@ -150,7 +145,6 @@ function getSectionText(sectionNum) {
   return lines.slice(current.lineIdx, endIdx).join('\n');
 }
 
-// 5. Archetype & Route Referential Integrity (broken-route-ref, orphaned-archetype, dead-end-flow)
 const sec3Text = getSectionText(3);
 const sec4Text = getSectionText(4);
 
@@ -231,7 +225,6 @@ for (const arch of definedArchetypes) {
   }
 }
 
-// 6. Mandatory View States Check (incomplete-state-matrix)
 const sec6Text = getSectionText(6);
 if (sec6Text) {
   const sec6Lines = sec6Text.split(/\r?\n/);
@@ -282,7 +275,7 @@ if (sec6Text) {
   }
 }
 
-// 7. Vague Prose & Placeholder Check (vague-prose)
+// Avoid matching lowercase query parameters like ?status=todo while catching uppercase TODO/TBD markers.
 const PLACEHOLDER_REGEX = /\b(?:TODO|TBD|FIXME)(?::|\b(?=\s+[A-Z]))|\[\s*(?:PROJECT_NAME|APP_SHELL_TYPE|TBD|TODO)\s*\]/;
 if (PLACEHOLDER_REGEX.test(raw)) {
   addFinding('vague-prose', 'error', 'Document contains unresolved TODO/TBD/template placeholders.');
@@ -304,7 +297,6 @@ for (const vp of VAGUE_PATTERNS) {
   }
 }
 
-// 8. Cross-Audit with Sibling DESIGN.md (design-md-mismatch)
 const siblingDesignMd = path.join(path.dirname(targetPath), 'DESIGN.md');
 if (fs.existsSync(siblingDesignMd)) {
   const tokenSourceMatch = frontmatterText.match(/^token_source\s*:\s*["']?([^"'\r\n]+)["']?/m);
@@ -340,17 +332,17 @@ function finish() {
       )
     );
   } else {
-    console.log(`🔍 Validating UX.md specification: ${path.relative(process.cwd(), targetPath) || 'UX.md'}\n`);
+    console.log(`Validating UX.md specification: ${path.relative(process.cwd(), targetPath) || 'UX.md'}\n`);
     for (const f of findings) {
-      const icon = f.severity === 'error' ? '❌' : f.severity === 'warning' ? '⚠️ ' : 'ℹ️ ';
+      const prefix = f.severity === 'error' ? '[ERROR]' : f.severity === 'warning' ? '[WARN] ' : '[INFO] ';
       const loc = f.section ? ` [${f.section}]` : '';
-      console.log(`${icon} (${f.rule})${loc}: ${f.message}`);
+      console.log(`${prefix} (${f.rule})${loc}: ${f.message}`);
     }
     if (findings.length > 0) console.log('');
     if (errors > 0 || (strictMode && warnings > 0)) {
-      console.error(`💥 UX.md validation failed (${errors} error(s), ${warnings} warning(s)).`);
+      console.error(`FAIL: UX.md validation failed (${errors} error(s), ${warnings} warning(s)).`);
     } else {
-      console.log(`✅ UX.md validation passed (${errors} error(s), ${warnings} warning(s)).`);
+      console.log(`PASS: UX.md validation passed (${errors} error(s), ${warnings} warning(s)).`);
     }
   }
 
