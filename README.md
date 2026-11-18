@@ -7,13 +7,14 @@
 <p align="center">
   <a href="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml"><img src="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml/badge.svg" alt="UX.md Spec & Linter CI" /></a>
   <a href="docs/spec.md"><img src="https://img.shields.io/badge/Specification-v1.0-0284c7" alt="Spec v1.0" /></a>
+  <a href="schema/ux-md.schema.json"><img src="https://img.shields.io/badge/JSON_Schema-2020--12-0369a1" alt="JSON Schema Draft 2020-12" /></a>
   <a href="skills/ux-md-generator/SKILL.md"><img src="https://img.shields.io/badge/Agent_Skill-ux--md--generator-0f172a" alt="Agent Skill" /></a>
   <a href="scripts/mcp-server.mjs"><img src="https://img.shields.io/badge/MCP_Server-stdio-0369a1" alt="MCP Server" /></a>
   <a href="llms.txt"><img src="https://img.shields.io/badge/llms.txt-ready-1e293b" alt="llms.txt" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-334155" alt="MIT License" /></a>
 </p>
 
-`UX.md` is a structural UI/UX format specification, zero-dependency CLI toolkit (`extract`, `generate`, `validate`, `preview`, `diff`), Model Context Protocol (MCP) server, and installable AI agent skill.
+`UX.md` is a structural UI/UX format specification, zero-dependency CLI toolkit (`extract`, `generate`, `validate`, `scaffold`, `preview`, `diff`), Model Context Protocol (MCP) server, and installable AI agent skill.
 
 While `AGENTS.md` defines engineering rules and `DESIGN.md` defines visual tokens (the skin), `UX.md` defines the application skeleton and interaction contracts: app shells, viewport budget math, scroll and z-index ownership, page archetypes, route reachability graphs, URL state persistence, 4-state view matrices, and mandatory code layout primitives.
 
@@ -34,7 +35,7 @@ Giving an AI coding agent a `DESIGN.md` ensures every screen uses the right colo
 | **`UX.md`** | **Skeleton & behavior** | App shell geometry, page archetypes, route graph, modal vs. drawer thresholds, 4-state view matrix (`Loading / Empty / Error / Populated`), URL state persistence, and code layout primitives |
 
 <p align="center">
-  <img src="./assets/triad-workflow.svg?v=2" alt="UX.md three-phase pipeline: Phase 1 Extract, Phase 2 Synthesize, Phase 3 Enforce" width="100%" />
+  <img src="./assets/triad-workflow.svg?v=3" alt="UX.md three-phase pipeline: Phase 1 Extract, Phase 2 Synthesize, Phase 3 Enforce and Scaffold" width="100%" />
 </p>
 
 ---
@@ -54,19 +55,22 @@ npx skills add SolidStateNetwork/ux.md --skill ux-md-generator --copy -y
 All commands run on Node.js 20+ with zero external npm dependencies:
 
 ```bash
-# 1. Initialize UX.md directly from an archetype or scan of the current repo
-npx ux-md init --archetype b2b-saas-workspace --project "Acme Workspace"
+# 1. Initialize UX.md from an archetype, product preset (--preset linear | chatgpt-canvas | stripe-dashboard | shopify-storefront | supabase-studio), or repo scan
+npx ux-md init --preset linear --project "Acme Workspace"
 
 # 2. Scan an existing repository (framework, DESIGN.md tokens, and source routes)
 npx ux-md extract . --output ux-scan.json
 
-# 3. Validate UX.md against 12 linter rules + live source code route parity
+# 3. Validate UX.md against 16 structural and live code-contract rules
 npx ux-md validate UX.md --strict --check-code
 
-# 4. Render an interactive HTML wireframe & breakpoint simulator (1280px / 768px / 375px)
+# 4. Scaffold CSS custom properties + React/TypeScript layout primitives (<AppShell>, <PageHeader>, <PageSection>, <DataStateBoundary>)
+npx ux-md scaffold UX.md --out-dir src/components/ux
+
+# 5. Render an interactive HTML wireframe & breakpoint simulator (1280px / 768px / 375px)
 npx ux-md preview UX.md --output ux-preview.html
 
-# 5. Diff two UX.md versions for route, budget, or threshold regressions
+# 6. Diff two UX.md versions for route, budget, or threshold regressions
 npx ux-md diff UX.old.md UX.md --json
 ```
 
@@ -87,7 +91,7 @@ Drop this block into your project's `AGENTS.md` or `CLAUDE.md` so every AI codin
 
 #### Model Context Protocol (MCP) configuration (`.mcp.json` / Claude Desktop / Cursor)
 
-Exposes five deterministic tools (`ux_extract`, `ux_generate`, `ux_validate`, `ux_preview`, `ux_diff`) and the `UX.md` v1.0 specification resource over `stdio`:
+Exposes six deterministic tools (`ux_extract`, `ux_generate`, `ux_validate`, `ux_scaffold`, `ux_preview`, `ux_diff`) plus the `UX.md` v1.0 specification and JSON Schema resources over `stdio`:
 
 ```json
 {
@@ -119,23 +123,23 @@ Add the validation badge to your project's README:
 
 ---
 
-## Reference blueprints (5 core archetypes)
+## Reference blueprints (5 core archetypes & product presets)
 
-Each blueprint in [`examples/`](examples/) passes all 12 rules in `validate-ux.mjs --strict` and can be rendered into an interactive HTML simulator via `npx ux-md preview`:
+Each blueprint in [`examples/`](examples/) passes all strict checks in `validate-ux.mjs --strict` and can be initialized by archetype ID or `--preset` alias:
 
-| Example | Archetype | Key structural contracts |
-| :--- | :--- | :--- |
-| [`examples/b2b-saas-workspace/UX.md`](examples/b2b-saas-workspace/UX.md) | `b2b-saas-workspace` | Keyboard-first issue workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette |
-| [`examples/ai-chat-canvas/UX.md`](examples/ai-chat-canvas/UX.md) | `ai-chat-canvas` | Split-pane conversational thread with synchronized artifact code/preview stage (`?artifact=`) and streaming scroll-lock rules |
-| [`examples/analytics-dashboard/UX.md`](examples/analytics-dashboard/UX.md) | `analytics-dashboard` | Global URL-persisted time and environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer |
-| [`examples/ecommerce-storefront/UX.md`](examples/ecommerce-storefront/UX.md) | `ecommerce-storefront` | Faceted discovery catalog, `4:5` aspect-reserved media, slide-over cart drawer (`?cart=open`), and guest-first checkout funnel |
-| [`examples/developer-tool/UX.md`](examples/developer-tool/UX.md) | `developer-tool` | Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy checkmarks, and tier-2 slug-confirm modals |
+| Example | Archetype | `--preset` aliases | Key structural contracts |
+| :--- | :--- | :--- | :--- |
+| [`examples/b2b-saas-workspace/UX.md`](examples/b2b-saas-workspace/UX.md) | `b2b-saas-workspace` | `linear` | Keyboard-first issue workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette |
+| [`examples/ai-chat-canvas/UX.md`](examples/ai-chat-canvas/UX.md) | `ai-chat-canvas` | `chatgpt-canvas`, `claude-artifacts` | Split-pane conversational thread with synchronized artifact code/preview stage (`?artifact=`) and streaming scroll-lock rules |
+| [`examples/analytics-dashboard/UX.md`](examples/analytics-dashboard/UX.md) | `analytics-dashboard` | `stripe-dashboard`, `datadog` | Global URL-persisted time and environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer |
+| [`examples/ecommerce-storefront/UX.md`](examples/ecommerce-storefront/UX.md) | `ecommerce-storefront` | `shopify-storefront` | Faceted discovery catalog, `4:5` aspect-reserved media, slide-over cart drawer (`?cart=open`), and guest-first checkout funnel |
+| [`examples/developer-tool/UX.md`](examples/developer-tool/UX.md) | `developer-tool` | `supabase-studio`, `vercel-console` | Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy checkmarks, and tier-2 slug-confirm modals |
 
 ---
 
 ## The `UX.md` v1 format (YAML frontmatter + 12 sections)
 
-Modeled on the hybrid structure of [Google's `DESIGN.md` specification](https://github.com/google-labs-code/design.md), `UX.md` pairs machine-verifiable YAML frontmatter with 12 ordered Markdown sections (see [`docs/spec.md`](docs/spec.md), [`PHILOSOPHY.md`](PHILOSOPHY.md), and [`llms.txt`](llms.txt)):
+Modeled on the hybrid structure of [Google's `DESIGN.md` specification](https://github.com/google-labs-code/design.md), `UX.md` pairs machine-verifiable YAML frontmatter (backed by [`schema/ux-md.schema.json`](schema/ux-md.schema.json)) with 12 ordered Markdown sections (see [`docs/spec.md`](docs/spec.md), [`PHILOSOPHY.md`](PHILOSOPHY.md), and [`llms.txt`](llms.txt)):
 
 ```yaml
 ---
@@ -214,6 +218,10 @@ layout_primitives:
 | `vague-prose` | `warning` | Flags non-deterministic adjectives (*"modals for small forms"*, *"clean layout"*) and unresolved `TODO`/`TBD` markers |
 | `design-md-mismatch` | `warning` | Verifies `token_source: "DESIGN.md"` alignment when a sibling `DESIGN.md` is present |
 | `route-parity` | `warning` | With `--check-code`, verifies that discovered routes in `src/app` or `src/pages` are registered in Section 4 |
+| `missing-code-route` | `warning` | With `--check-code`, flags routes documented in Section 4 that have no matching route file in source code |
+| `missing-layout-primitive` | `warning` | With `--check-code`, verifies that discovered route files reference at least one declared layout primitive (`AppShell`, `PageHeader`, `PageSection`, `DataStateBoundary`) |
+| `dead-handler` | `error` | With `--check-code`, scans UI source files for no-op handlers (`onClick={() => {}}`, `href="#"`, `javascript:void(0)`) forbidden by Section 11 |
+| `rogue-z-index` | `warning` | With `--check-code`, flags arbitrary z-index values (`z-[999]`, `zIndex: 9999`) outside the `z_index_scale` declared in frontmatter |
 
 ---
 
@@ -223,7 +231,8 @@ layout_primitives:
 ux.md/
 ├── .github/workflows/
 │   ├── validate.yml
-│   └── pages.yml
+│   ├── pages.yml
+│   └── release.yml
 ├── action.yml
 ├── package.json
 ├── llms.txt
@@ -235,6 +244,8 @@ ux.md/
 │   └── made-with-beautify.svg
 ├── bin/
 │   └── ux-md.mjs
+├── schema/
+│   └── ux-md.schema.json
 ├── scripts/
 │   ├── mcp-server.mjs
 │   └── build-showcase.mjs
@@ -260,6 +271,7 @@ ux.md/
             ├── extract-ux.mjs
             ├── generate-ux.mjs
             ├── validate-ux.mjs
+            ├── scaffold-ux.mjs
             ├── preview-ux.mjs
             └── diff-ux.mjs
 ```

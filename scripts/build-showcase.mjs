@@ -103,6 +103,9 @@ if (fs.existsSync(path.join(rootDir, 'llms.txt'))) {
 if (fs.existsSync(path.join(rootDir, 'docs', 'spec.md'))) {
   fs.copyFileSync(path.join(rootDir, 'docs', 'spec.md'), path.join(distDir, 'spec.md'));
 }
+if (fs.existsSync(path.join(rootDir, 'schema', 'ux-md.schema.json'))) {
+  fs.copyFileSync(path.join(rootDir, 'schema', 'ux-md.schema.json'), path.join(distDir, 'schema.json'));
+}
 
 function esc(str) {
   return String(str)
@@ -617,6 +620,7 @@ const indexHtml = `<!DOCTYPE html>
       <nav class="top-nav" aria-label="Primary repository links">
         <a href="#blueprints">5 Reference Blueprints</a>
         <a href="#agent-integration">AGENTS.md &amp; MCP Setup</a>
+        <a href="./schema.json">schema.json</a>
         <a href="./llms.txt">llms.txt</a>
         <a href="https://github.com/SolidStateNetwork/ux.md">GitHub Repository</a>
         <button type="button" id="theme-toggle" class="control-btn" aria-pressed="false" aria-label="Switch color theme">
@@ -704,7 +708,7 @@ const indexHtml = `<!DOCTYPE html>
       <section id="blueprints" class="directory-section" aria-labelledby="dir-heading">
         <div class="section-head">
           <h2 id="dir-heading">Validated Reference Blueprints (5 Core Archetypes)</h2>
-          <p>Every specification below passes all 12 deterministic rules in <code>validate-ux.mjs --strict</code>.</p>
+          <p>Every specification below passes all 16 deterministic rules in <code>validate-ux.mjs --strict</code>.</p>
         </div>
         <div class="table-wrap">
           <table>
@@ -758,7 +762,7 @@ const indexHtml = `<!DOCTYPE html>
 
         <div class="panel-box">
           <h2 style="font-size: 1.2rem;">2. Zero-Dependency MCP Server &amp; GitHub Action</h2>
-          <p>Expose <code>ux_extract</code>, <code>ux_generate</code>, <code>ux_validate</code>, <code>ux_preview</code>, and <code>ux_diff</code> to Claude Desktop, Cursor, Windsurf, or OpenCode via Model Context Protocol:</p>
+          <p>Expose <code>ux_extract</code>, <code>ux_generate</code>, <code>ux_validate</code>, <code>ux_scaffold</code>, <code>ux_preview</code>, and <code>ux_diff</code> to Claude Desktop, Cursor, Windsurf, or OpenCode via Model Context Protocol:</p>
           <pre id="mcp-snippet" class="code-block">{
   "mcpServers": {
     "ux-md": {
@@ -778,6 +782,7 @@ const indexHtml = `<!DOCTYPE html>
       <span>MIT License &copy; SolidStateNetwork</span>
       <div style="display: flex; flex-wrap: wrap; gap: 10px;">
         <a class="action-link" href="https://github.com/SolidStateNetwork/ux.md">GitHub Repository</a>
+        <a class="action-link" href="./schema.json">JSON Schema</a>
         <a class="action-link" href="./llms.txt">llms.txt for AI Agents</a>
       </div>
     </footer>

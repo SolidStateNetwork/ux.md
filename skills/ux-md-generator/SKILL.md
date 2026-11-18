@@ -18,7 +18,7 @@ While `DESIGN.md` specifies visual tokens (colors, typography, radii, shadows, s
 
 Without `UX.md`, AI coding agents drift across sessions: mixing container widths, moving primary CTAs, alternating arbitrarily between modals and drawers, omitting empty or error states, losing filter state on `F5` refresh, and introducing dead-end routes.
 
-This skill operates across four modes using a three-phase pipeline backed by five zero-dependency Node.js scripts in `scripts/`.
+This skill operates across four modes using a three-phase pipeline backed by six zero-dependency Node.js scripts in `scripts/`.
 
 ---
 
@@ -27,8 +27,9 @@ This skill operates across four modes using a three-phase pipeline backed by fiv
 | Script | Purpose | Example Usage |
 | :--- | :--- | :--- |
 | `scripts/extract-ux.mjs` | Scans `package.json`, `AGENTS.md`, `DESIGN.md`, and source routes (`src/app`, `src/pages`) into structured JSON | `node .agents/skills/ux-md-generator/scripts/extract-ux.mjs . --output ux-scan.json` |
-| `scripts/generate-ux.mjs` | Scaffolds a 12-section `UX.md` from an archetype preset or `ux-scan.json` | `node .agents/skills/ux-md-generator/scripts/generate-ux.mjs --archetype b2b-saas-workspace --project "Acme" --output UX.md` |
-| `scripts/validate-ux.mjs` | Runs 11 deterministic linter rules plus optional `--check-code` route parity verification | `node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict --check-code` |
+| `scripts/generate-ux.mjs` | Scaffolds a 12-section `UX.md` from an archetype, product preset (`--preset linear`), or `ux-scan.json` | `node .agents/skills/ux-md-generator/scripts/generate-ux.mjs --preset linear --project "Acme" --output UX.md` |
+| `scripts/validate-ux.mjs` | Runs 16 deterministic structural and `--check-code` linter rules (route parity, primitives, dead handlers, rogue z-indexes) | `node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict --check-code` |
+| `scripts/scaffold-ux.mjs` | Generates `ux-contract.css` custom properties and React/TypeScript layout primitives (`AppShell.tsx`, `PageHeader.tsx`, `PageSection.tsx`, `DataStateBoundary.tsx`) from `UX.md` | `node .agents/skills/ux-md-generator/scripts/scaffold-ux.mjs UX.md --out-dir src/components/ux` |
 | `scripts/preview-ux.mjs` | Generates a standalone, responsive `ux-preview.html` interactive wireframe simulator | `node .agents/skills/ux-md-generator/scripts/preview-ux.mjs UX.md --output ux-preview.html` |
 | `scripts/diff-ux.mjs` | Compares two `UX.md` files for route, archetype, budget, or threshold regressions | `node .agents/skills/ux-md-generator/scripts/diff-ux.mjs UX.old.md UX.md --json` |
 

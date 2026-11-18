@@ -324,12 +324,14 @@ if (fs.existsSync(siblingDesignMd)) {
 }
 
 function discoverCodeRoutes(rootDir) {
-  const discovered = new Set();
+  const discovered = new Map();
   const appDirs = ['src/app', 'app'];
   const pageDirs = ['src/pages', 'pages', 'src/routes'];
+  let hasRouterDir = false;
 
   function walkAppRouter(dir, baseDir) {
     if (!fs.existsSync(dir)) return;
+    hasRouterDir = true;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (entry.name.startsWith('.') || entry.name === 'api' || entry.name === 'node_modules') continue;
       const full = path.join(dir, entry.name);
@@ -344,13 +346,15 @@ function discoverCodeRoutes(rootDir) {
             .filter((seg) => seg && !/^\(.*\)$/.test(seg) && !seg.startsWith('@'))
             .map((seg) => seg.replace(/^\[(?:\.\.\.)?([^\]]+)\]$/, ':$1'))
             .join('/');
-        discovered.add(normalized === '/' ? '/' : normalized.replace(/\/+$/, ''));
+        const routeKey = normalized === '/' ? '/' : normalized.replace(/\/+$/, '');
+        discovered.set(routeKey, full);
       }
     }
   }
 
   function walkPagesRouter(dir, baseDir) {
     if (!fs.existsSync(dir)) return;
+    hasRouterDir = true;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (entry.name.startsWith('.') || entry.name.startsWith('_') || entry.name === 'api') continue;
       const full = path.join(dir, entry.name);
@@ -366,18 +370,46 @@ function discoverCodeRoutes(rootDir) {
             .filter(Boolean)
             .map((seg) => seg.replace(/^\[(?:\.\.\.)?([^\]]+)\]$/, ':$1'))
             .join('/');
-        discovered.add(normalized || '/');
+        const routeKey = normalized || '/';
+        discovered.set(routeKey, full);
       }
     }
   }
 
   for (const d of appDirs) walkAppRouter(path.join(rootDir, d), path.join(rootDir, d));
   for (const d of pageDirs) walkPagesRouter(path.join(rootDir, d), path.join(rootDir, d));
-  return Array.from(discovered);
+  return { routesMap: discovered, hasRouterDir };
+}
+
+function collectUiSourceFiles(rootDir) {
+  const uiFiles = [];
+  const candidateDirs = ['src/app', 'app', 'src/pages', 'pages', 'src/routes', 'src/components', 'components'];
+  const visited = new Set();
+
+  function walk(dir) {
+    if (!fs.existsSync(dir)) return;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (/\.(?:tsx|jsx|vue|svelte)$/.test(entry.name) && !visited.has(full)) {
+        visited.add(full);
+        uiFiles.push(full);
+      }
+    }
+  }
+
+  for (const d of candidateDirs) {
+    walk(path.join(rootDir, d));
+  }
+  return uiFiles;
 }
 
 if (checkCodeEnabled) {
-  const codeRoutes = discoverCodeRoutes(projectRoot);
+  const { routesMap, hasRouterDir } = discoverCodeRoutes(projectRoot);
+  const codeRoutes = Array.from(routesMap.keys());
+
   for (const codeRoute of codeRoutes) {
     if (!documentedRoutes.has(codeRoute)) {
       addFinding(
@@ -386,6 +418,73 @@ if (checkCodeEnabled) {
         `Code route "${codeRoute}" exists in source files but is not registered in Section 4 of UX.md.`,
         'section-4'
       );
+    }
+  }
+
+  if (hasRouterDir && codeRoutes.length > 0) {
+    for (const docRoute of documentedRoutes) {
+      if (!routesMap.has(docRoute)) {
+        addFinding(
+          'missing-code-route',
+          'warning',
+          `Documented route "${docRoute}" in Section 4 of UX.md has no matching route file in source code.`,
+          'section-4'
+        );
+      }
+    }
+  }
+
+  const primitiveNames = ['AppShell', 'PageHeader', 'PageSection', 'DataStateBoundary'];
+  for (const [routeKey, filePath] of routesMap.entries()) {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const relPath = path.relative(projectRoot, filePath);
+    const usesPrimitive = primitiveNames.some((p) => new RegExp(`\\b${p}\\b`).test(fileContent));
+    if (!usesPrimitive) {
+      addFinding(
+        'missing-layout-primitive',
+        'warning',
+        `Route file "${relPath}" (${routeKey}) does not reference any UX.md layout primitives (${primitiveNames.join(', ')}).`,
+        'section-10'
+      );
+    }
+  }
+
+  const maxAllowedZIndex = extractFmNumber('tooltip') ?? 70;
+  const allowedZValues = new Set(
+    ['base', 'sticky', 'navigation', 'drawer', 'modal', 'popover', 'toast', 'tooltip']
+      .map((k) => extractFmNumber(k))
+      .filter((v) => v !== null)
+  );
+
+  const uiFiles = collectUiSourceFiles(projectRoot);
+  const deadHandlerRegex = /\b(?:onClick|onSubmit)\s*=\s*\{\s*\(\s*\)\s*=>\s*\{\s*\}\s*\}|\bhref\s*=\s*["'](?:#|javascript:void\(0\))["']/;
+  const arbitraryZRegex = /\bz-\[(\d+)\]|\bzIndex\s*:\s*(\d+)/g;
+
+  for (const filePath of uiFiles) {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const relPath = path.relative(projectRoot, filePath);
+
+    if (deadHandlerRegex.test(content)) {
+      addFinding(
+        'dead-handler',
+        'error',
+        `UI source file "${relPath}" contains a no-op handler (onClick={() => {}}, href="#", or javascript:void(0)) forbidden by Section 11.`,
+        'section-11'
+      );
+    }
+
+    let zMatch;
+    arbitraryZRegex.lastIndex = 0;
+    while ((zMatch = arbitraryZRegex.exec(content)) !== null) {
+      const zVal = Number(zMatch[1] || zMatch[2]);
+      if (!allowedZValues.has(zVal) && zVal > maxAllowedZIndex) {
+        addFinding(
+          'rogue-z-index',
+          'warning',
+          `UI source file "${relPath}" uses arbitrary z-index "${zVal}" outside UX.md z_index_scale (max tooltip = ${maxAllowedZIndex}).`,
+          'section-2'
+        );
+      }
     }
   }
 }

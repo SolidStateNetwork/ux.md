@@ -31,7 +31,7 @@ const TOOLS = [
   {
     name: 'ux_generate',
     description:
-      'Generate a 12-section UX.md v1 specification from an archetype preset (b2b-saas-workspace, ai-chat-canvas, analytics-dashboard, ecommerce-storefront, developer-tool) or a scan file.',
+      'Generate a 12-section UX.md v1 specification from an archetype, product preset (linear, chatgpt-canvas, claude-artifacts, stripe-dashboard, datadog, shopify-storefront, supabase-studio, vercel-console), or a scan file.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -45,6 +45,20 @@ const TOOLS = [
             'developer-tool'
           ],
           description: 'UX archetype preset.'
+        },
+        preset: {
+          type: 'string',
+          enum: [
+            'linear',
+            'chatgpt-canvas',
+            'claude-artifacts',
+            'stripe-dashboard',
+            'datadog',
+            'shopify-storefront',
+            'supabase-studio',
+            'vercel-console'
+          ],
+          description: 'Optional product preset alias mapping to a reference UX archetype.'
         },
         project: {
           type: 'string',
@@ -69,7 +83,7 @@ const TOOLS = [
   {
     name: 'ux_validate',
     description:
-      'Validate a UX.md file against 12 structural linter rules (viewport budget math, z-index collisions, route reachability, 4-state view matrix, vague prose, and live code route parity).',
+      'Validate a UX.md file against 16 structural and code-contract linter rules (viewport budget math, z-index collisions, route reachability, 4-state view matrix, vague prose, bidirectional route parity, layout primitive usage, dead handlers, and rogue z-indexes).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -83,11 +97,33 @@ const TOOLS = [
         },
         check_code: {
           type: 'boolean',
-          description: 'Verify live route parity against src/app, src/pages, or src/routes.'
+          description: 'Verify live code contract (bidirectional route parity, layout primitives, dead handlers, and rogue z-index values).'
         },
         source_dir: {
           type: 'string',
           description: 'Optional source directory when check_code is true.'
+        }
+      }
+    }
+  },
+  {
+    name: 'ux_scaffold',
+    description:
+      'Generate CSS custom properties (ux-contract.css) and zero-dependency React/TypeScript layout primitive components (AppShell.tsx, PageHeader.tsx, PageSection.tsx, DataStateBoundary.tsx) directly from a UX.md file.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          description: 'Path to UX.md file (defaults to UX.md).'
+        },
+        out_dir: {
+          type: 'string',
+          description: 'Target output directory for generated components (defaults to src/components/ux).'
+        },
+        css_only: {
+          type: 'boolean',
+          description: 'Generate only ux-contract.css without React/TypeScript component files.'
         }
       }
     }
@@ -154,6 +190,7 @@ function handleToolCall(name, args = {}) {
     case 'ux_generate': {
       const cliArgs = [];
       if (args.from_scan) cliArgs.push('--from-scan', args.from_scan);
+      if (args.preset) cliArgs.push('--preset', args.preset);
       if (args.archetype) cliArgs.push('--archetype', args.archetype);
       if (args.project) cliArgs.push('--project', args.project);
       if (args.profile) cliArgs.push('--profile', args.profile);
@@ -168,6 +205,12 @@ function handleToolCall(name, args = {}) {
         if (args.source_dir) cliArgs.push(args.source_dir);
       }
       return invokeCliScript('validate-ux.mjs', cliArgs);
+    }
+    case 'ux_scaffold': {
+      const cliArgs = [args.file || 'UX.md'];
+      if (args.out_dir) cliArgs.push('--out-dir', args.out_dir);
+      if (args.css_only) cliArgs.push('--css-only');
+      return invokeCliScript('scaffold-ux.mjs', cliArgs);
     }
     case 'ux_preview': {
       const cliArgs = [args.file || 'UX.md', '--output', args.output || 'ux-preview.html'];
@@ -249,6 +292,7 @@ function handleRpcMessage(msg) {
 
   if (msg.method === 'resources/list') {
     const specUri = `file://${path.join(rootDir, 'docs', 'spec.md')}`;
+    const schemaUri = `file://${path.join(rootDir, 'schema', 'ux-md.schema.json')}`;
     sendMessage({
       jsonrpc: '2.0',
       id: msg.id,
@@ -257,8 +301,14 @@ function handleRpcMessage(msg) {
           {
             uri: specUri,
             name: 'UX.md v1.0 Specification',
-            description: 'Formal 12-section specification and YAML frontmatter schema for UX.md.',
+            description: 'Formal 12-section specification and YAML frontmatter contract for UX.md.',
             mimeType: 'text/markdown'
+          },
+          {
+            uri: schemaUri,
+            name: 'UX.md v1.0 JSON Schema',
+            description: 'JSON Schema Draft 2020-12 for UX.md YAML frontmatter validation and IDE autocompletion.',
+            mimeType: 'application/schema+json'
           }
         ]
       }
@@ -267,16 +317,20 @@ function handleRpcMessage(msg) {
   }
 
   if (msg.method === 'resources/read') {
-    const specPath = path.join(rootDir, 'docs', 'spec.md');
-    const text = fs.existsSync(specPath) ? fs.readFileSync(specPath, 'utf8') : '';
+    const requestedUri = msg.params?.uri || '';
+    const isSchema = requestedUri.endsWith('.json');
+    const targetFile = isSchema
+      ? path.join(rootDir, 'schema', 'ux-md.schema.json')
+      : path.join(rootDir, 'docs', 'spec.md');
+    const text = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, 'utf8') : '';
     sendMessage({
       jsonrpc: '2.0',
       id: msg.id,
       result: {
         contents: [
           {
-            uri: msg.params?.uri || `file://${specPath}`,
-            mimeType: 'text/markdown',
+            uri: requestedUri || `file://${targetFile}`,
+            mimeType: isSchema ? 'application/schema+json' : 'text/markdown',
             text
           }
         ]

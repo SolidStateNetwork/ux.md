@@ -6,12 +6,14 @@
 
 - Install as an AI agent skill (Claude Code, Cursor, Antigravity, OpenCode, Codex, Copilot):
   `npx skills add SolidStateNetwork/ux.md --skill ux-md-generator --copy -y`
-- Scaffold a new `UX.md` via CLI:
-  `npx ux-md init --archetype b2b-saas-workspace --project "Acme Workspace"`
+- Scaffold a new `UX.md` via CLI archetype or product preset (`linear`, `chatgpt-canvas`, `claude-artifacts`, `stripe-dashboard`, `datadog`, `shopify-storefront`, `supabase-studio`, `vercel-console`):
+  `npx ux-md init --preset linear --project "Acme Workspace"`
 - Scan an existing repository (framework, `DESIGN.md` tokens, `src/app` or `src/pages` routes):
   `npx ux-md extract . --output ux-scan.json`
-- Validate `UX.md` against 12 structural linter rules and live source routes:
+- Validate `UX.md` against 16 structural and code-contract linter rules (bidirectional route parity, layout primitives, dead handlers, rogue z-indexes):
   `npx ux-md validate UX.md --strict --check-code`
+- Generate `ux-contract.css` custom properties and React/TypeScript layout primitives (`AppShell.tsx`, `PageHeader.tsx`, `PageSection.tsx`, `DataStateBoundary.tsx`) from `UX.md`:
+  `npx ux-md scaffold UX.md --out-dir src/components/ux`
 - Render an interactive HTML wireframe and breakpoint simulator (`1280px` / `768px` / `375px`):
   `npx ux-md preview UX.md --output ux-preview.html`
 - Diff two `UX.md` files for route, budget, or threshold regressions:
@@ -32,7 +34,8 @@ Add this block to a project's `AGENTS.md` or `CLAUDE.md` so AI coding agents enf
 
 ## Core Specification & Documentation
 
-- [Formal v1.0 Specification](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/docs/spec.md): YAML frontmatter schema, 12 canonical sections (`0` through `11`), and 12 automated linter rule definitions.
+- [Formal v1.0 Specification](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/docs/spec.md): YAML frontmatter schema, 12 canonical sections (`0` through `11`), and 16 automated linter rule definitions.
+- [YAML Frontmatter JSON Schema (Draft 2020-12)](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/schema/ux-md.schema.json): Machine-verifiable JSON Schema (`https://solidstatenetwork.github.io/ux.md/schema.json`) for IDE validation and autocompletion.
 - [Architectural Philosophy](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/PHILOSOPHY.md): Why visual tokens (`DESIGN.md`) alone fail to prevent multi-session layout drift.
 - [Agent Skill Instructions (`ux-md-generator`)](https://raw.githubusercontent.com/SolidStateNetwork/ux.md/main/skills/ux-md-generator/SKILL.md): 4 operating modes (`Synthesize`, `Extract from reference`, `Audit existing code`, `Evolve`) and 3-phase pipeline.
 

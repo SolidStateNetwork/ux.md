@@ -16,8 +16,40 @@ function getFlag(name, fallback = null) {
   return fallback;
 }
 
-const scanFile = getFlag('--from-scan');
-const scanData = scanFile && fs.existsSync(scanFile) ? JSON.parse(fs.readFileSync(scanFile, 'utf8')) : null;
+const PRESET_MAP = {
+  linear: {
+    archetype: 'b2b-saas-workspace',
+    defaultProject: 'Linear-Style Issue Workspace'
+  },
+  'chatgpt-canvas': {
+    archetype: 'ai-chat-canvas',
+    defaultProject: 'AI Chat & Artifact Canvas'
+  },
+  'claude-artifacts': {
+    archetype: 'ai-chat-canvas',
+    defaultProject: 'Conversational Artifact Studio'
+  },
+  'stripe-dashboard': {
+    archetype: 'analytics-dashboard',
+    defaultProject: 'Financial & Telemetry Dashboard'
+  },
+  datadog: {
+    archetype: 'analytics-dashboard',
+    defaultProject: 'Observability & Metrics Console'
+  },
+  'shopify-storefront': {
+    archetype: 'ecommerce-storefront',
+    defaultProject: 'Direct-to-Consumer Storefront'
+  },
+  'supabase-studio': {
+    archetype: 'developer-tool',
+    defaultProject: 'Database & Cloud Workbench'
+  },
+  'vercel-console': {
+    archetype: 'developer-tool',
+    defaultProject: 'Deployment & Edge Console'
+  }
+};
 
 const VALID_ARCHETYPES = new Set([
   'b2b-saas-workspace',
@@ -27,7 +59,35 @@ const VALID_ARCHETYPES = new Set([
   'developer-tool'
 ]);
 
-const requestedArchetype = getFlag('--archetype', scanData?.inferred_archetype || 'b2b-saas-workspace');
+if (args.includes('--list-presets')) {
+  console.log('Available UX.md Archetypes:');
+  for (const arch of VALID_ARCHETYPES) {
+    console.log(`  - ${arch}`);
+  }
+  console.log('\nAvailable Product Presets (--preset <name>):');
+  for (const [presetName, meta] of Object.entries(PRESET_MAP)) {
+    console.log(`  - ${presetName.padEnd(20)} -> ${meta.archetype} (${meta.defaultProject})`);
+  }
+  process.exit(0);
+}
+
+const scanFile = getFlag('--from-scan');
+const scanData = scanFile && fs.existsSync(scanFile) ? JSON.parse(fs.readFileSync(scanFile, 'utf8')) : null;
+
+const requestedPreset = getFlag('--preset');
+if (requestedPreset && !PRESET_MAP[requestedPreset]) {
+  console.error(
+    `FAIL: Unsupported preset "${requestedPreset}". Valid presets: ${Object.keys(PRESET_MAP).join(', ')}`
+  );
+  process.exit(1);
+}
+
+const presetEntry = requestedPreset ? PRESET_MAP[requestedPreset] : null;
+const requestedArchetype = getFlag(
+  '--archetype',
+  presetEntry?.archetype || scanData?.inferred_archetype || 'b2b-saas-workspace'
+);
+
 if (!VALID_ARCHETYPES.has(requestedArchetype)) {
   console.error(
     `FAIL: Unsupported archetype "${requestedArchetype}". Valid archetypes: ${Array.from(VALID_ARCHETYPES).join(', ')}`
@@ -35,7 +95,10 @@ if (!VALID_ARCHETYPES.has(requestedArchetype)) {
   process.exit(1);
 }
 
-const projectName = getFlag('--project', scanData?.project || path.basename(process.cwd()));
+const projectName = getFlag(
+  '--project',
+  scanData?.project || presetEntry?.defaultProject || path.basename(process.cwd())
+);
 const outputPath = path.resolve(process.cwd(), getFlag('--output', 'UX.md'));
 const hasDesignMd =
   scanData?.has_design_md ?? fs.existsSync(path.join(path.dirname(outputPath), 'DESIGN.md'));
@@ -55,8 +118,9 @@ if (fs.existsSync(repoExamplesDir)) {
 }
 
 fs.writeFileSync(outputPath, content, 'utf8');
+const presetNote = requestedPreset ? `, preset: ${requestedPreset}` : '';
 console.log(
-  `PASS: Generated UX.md (${requestedArchetype}, token_source: ${tokenSource}) at ${path.relative(process.cwd(), outputPath) || 'UX.md'}`
+  `PASS: Generated UX.md (${requestedArchetype}${presetNote}, token_source: ${tokenSource}) at ${path.relative(process.cwd(), outputPath) || 'UX.md'}`
 );
 
 function buildArchetypeSpec(archetype, project, tokenSrc) {

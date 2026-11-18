@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://solidstatenetwork.github.io/ux.md/schema.json",
+  "title": "UX.md v1.0 YAML Frontmatter Schema",
+  "description": "Machine-verifiable YAML frontmatter contract for UX.md structural UI/UX specifications (app shell budget, breakpoints, monotonic z-index scale, interaction thresholds, and mandatory layout primitives).",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "project",
+    "platform_profile",
+    "archetype",
+    "token_source",
+    "scroll_owner",
+    "breakpoints",
+    "shell_budget",
+    "z_index_scale",
+    "thresholds",
+    "layout_primitives"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "const": "1.0",
+      "default": "1.0",
+      "description": "Specification format version."
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable project or application name."
+    },
+    "platform_profile": {
+      "type": "string",
+      "enum": ["web-app", "mobile-native", "desktop-app", "terminal-tui"],
+      "default": "web-app",
+      "description": "Target runtime and primary input modality."
+    },
+    "archetype": {
+      "type": "string",
+      "enum": [
+        "b2b-saas-workspace",
+        "ai-chat-canvas",
+        "analytics-dashboard",
+        "ecommerce-storefront",
+        "developer-tool"
+      ],
+      "default": "b2b-saas-workspace",
+      "description": "Primary application UX archetype."
+    },
+    "token_source": {
+      "type": "string",
+      "enum": ["DESIGN.md", "standalone"],
+      "default": "DESIGN.md",
+      "description": "Visual token source file (`DESIGN.md` when paired with a sibling DESIGN.md, otherwise `standalone`)."
+    },
+    "scroll_owner": {
+      "type": "string",
+      "enum": ["inner-canvas", "split-pane", "window"],
+      "default": "inner-canvas",
+      "description": "Single primary scroll container owner preventing nested full-height scrollbars."
+    },
+    "breakpoints": {
+      "type": "object",
+      "required": ["mobile_max", "tablet_max", "desktop_min"],
+      "additionalProperties": false,
+      "description": "Responsive viewport breakpoint boundaries in pixels.",
+      "properties": {
+        "mobile_max": {
+          "type": "integer",
+          "minimum": 320,
+          "default": 767,
+          "description": "Maximum viewport width in px for the mobile layout."
+        },
+        "tablet_max": {
+          "type": "integer",
+          "minimum": 600,
+          "default": 1023,
+          "description": "Maximum viewport width in px for the tablet layout."
+        },
+        "desktop_min": {
+          "type": "integer",
+          "minimum": 1024,
+          "default": 1280,
+          "description": "Minimum viewport width in px for the persistent desktop app shell."
+        }
+      }
+    },
+    "shell_budget": {
+      "type": "object",
+      "required": [
+        "desktop_viewport",
+        "left_nav_px",
+        "right_panel_px",
+        "outer_padding_px",
+        "content_min_px"
+      ],
+      "additionalProperties": false,
+      "description": "Spatial pixel budget at the desktop reference viewport. Must satisfy left_nav_px + right_panel_px + outer_padding_px + content_min_px <= desktop_viewport unless collapse_priority is declared.",
+      "properties": {
+        "desktop_viewport": {
+          "type": "integer",
+          "minimum": 1024,
+          "default": 1280,
+          "description": "Reference desktop viewport width in px."
+        },
+        "left_nav_px": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 240,
+          "description": "Persistent left navigation rail width in px."
+        },
+        "right_panel_px": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Persistent right dock/artifact panel width in px (0 when inspector opens as an overlay drawer)."
+        },
+        "outer_padding_px": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 48,
+          "description": "Combined horizontal outer canvas padding (left + right) in px."
+        },
+        "content_min_px": {
+          "type": "integer",
+          "minimum": 320,
+          "default": 720,
+          "description": "Minimum guaranteed primary content canvas width in px."
+        },
+        "collapse_priority": {
+          "type": "array",
+          "description": "Ordered responsive collapse sequence for fixed panels.",
+          "items": {
+            "type": "object",
+            "required": ["panel", "below_px"],
+            "additionalProperties": false,
+            "properties": {
+              "panel": {
+                "type": "string",
+                "enum": ["right_panel", "left_nav", "secondary_rail"]
+              },
+              "below_px": {
+                "type": "integer",
+                "minimum": 320
+              }
+            }
+          }
+        }
+      }
+    },
+    "z_index_scale": {
+      "type": "object",
+      "required": [
+        "base",
+        "sticky",
+        "navigation",
+        "drawer",
+        "modal",
+        "popover",
+        "toast",
+        "tooltip"
+      ],
+      "additionalProperties": false,
+      "description": "Strictly monotonic elevation scale (base < sticky < navigation < drawer < modal < popover < toast < tooltip).",
+      "properties": {
+        "base": { "type": "integer", "default": 0 },
+        "sticky": { "type": "integer", "default": 10 },
+        "navigation": { "type": "integer", "default": 20 },
+        "drawer": { "type": "integer", "default": 30 },
+        "modal": { "type": "integer", "default": 40 },
+        "popover": { "type": "integer", "default": 50 },
+        "toast": { "type": "integer", "default": 60 },
+        "tooltip": { "type": "integer", "default": 70 }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "required": [
+        "modal_max_fields",
+        "no_spinner_below_ms",
+        "skeleton_min_ms",
+        "toast_auto_dismiss_ms",
+        "min_touch_target_px"
+      ],
+      "additionalProperties": false,
+      "description": "Deterministic numeric interaction thresholds.",
+      "properties": {
+        "modal_max_fields": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 4,
+          "description": "Maximum form fields permitted in a centered modal before requiring a slide-over drawer or route."
+        },
+        "no_spinner_below_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 150,
+          "description": "Latency threshold in ms below which loading indicators are suppressed."
+        },
+        "skeleton_min_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 150,
+          "description": "Latency threshold in ms at or above which geometry-matched skeletons render."
+        },
+        "toast_auto_dismiss_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "default": 4000,
+          "description": "Auto-dismiss timer in ms for non-error toasts."
+        },
+        "min_touch_target_px": {
+          "type": "integer",
+          "minimum": 44,
+          "default": 44,
+          "description": "Minimum interactive touch target width and height in px."
+        }
+      }
+    },
+    "layout_primitives": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "default": ["AppShell", "PageHeader", "PageSection", "DataStateBoundary"],
+      "description": "Shared code layout primitives that all UI route files must compose.",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

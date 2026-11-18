@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Validate Examples, CLI, MCP Server & Showcase
+    name: Validate Examples, CLI, Scaffold, MCP Server & Showcase
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,19 +22,27 @@ jobs:
       - name: Validate all 5 reference UX.md examples (--strict)
         run: npm test
 
-      - name: Test CLI (init, extract, generate, validate, preview, diff)
+      - name: Test CLI (init --preset, extract, generate, validate, scaffold, preview, diff)
         run: |
           node ./bin/ux-md.mjs --version
+          node ./bin/ux-md.mjs generate --list-presets
+          node ./bin/ux-md.mjs init --preset linear --project "CI Linear Preset" --output /tmp/preset-UX.md
+          node ./bin/ux-md.mjs validate /tmp/preset-UX.md --strict
+          node ./bin/ux-md.mjs scaffold /tmp/preset-UX.md --out-dir /tmp/ux-primitives
+          test -f /tmp/ux-primitives/ux-contract.css
+          test -f /tmp/ux-primitives/AppShell.tsx
+          test -f /tmp/ux-primitives/DataStateBoundary.tsx
           node ./bin/ux-md.mjs extract . --output /tmp/ux-scan.json
           node ./bin/ux-md.mjs generate --from-scan /tmp/ux-scan.json --project "CI Test Project" --output /tmp/generated-UX.md
           node ./bin/ux-md.mjs validate /tmp/generated-UX.md --strict
           node ./bin/ux-md.mjs preview /tmp/generated-UX.md --output /tmp/ux-preview.html
           node ./bin/ux-md.mjs diff examples/b2b-saas-workspace/UX.md /tmp/generated-UX.md --json
 
-      - name: Test stdio MCP Server (initialize, tools/list, tools/call)
+      - name: Test stdio MCP Server (initialize, tools/list, tools/call, resources/list)
         run: |
-          printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}\n{"jsonrpc":"2.0","id":2,"method":"tools/list"}\n{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ux_validate","arguments":{"file":"examples/b2b-saas-workspace/UX.md","strict":true}}}\n' | node ./scripts/mcp-server.mjs > /tmp/mcp-out.jsonl
-          grep -q '"ux_validate"' /tmp/mcp-out.jsonl
+          printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}\n{"jsonrpc":"2.0","id":2,"method":"tools/list"}\n{"jsonrpc":"2.0","id":3,"method":"resources/list"}\n{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"ux_validate","arguments":{"file":"examples/b2b-saas-workspace/UX.md","strict":true}}}\n{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"ux_scaffold","arguments":{"file":"examples/b2b-saas-workspace/UX.md","out_dir":"/tmp/mcp-primitives"}}}\n' | node ./scripts/mcp-server.mjs > /tmp/mcp-out.jsonl
+          grep -q '"ux_scaffold"' /tmp/mcp-out.jsonl
+          grep -q 'ux-md.schema.json' /tmp/mcp-out.jsonl
           grep -q '"isError":false' /tmp/mcp-out.jsonl
 
       - name: Build static interactive HTML showcase

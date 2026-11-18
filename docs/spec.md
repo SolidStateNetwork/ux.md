@@ -86,7 +86,7 @@ Sections appear in sequential order (`0` through `11`):
 
 ## 4. Linter rules (`validate-ux.mjs`)
 
-The `UX.md` linter enforces 11 deterministic rules:
+The `UX.md` linter enforces 16 deterministic structural and code-contract rules (and pairs with [`schema/ux-md.schema.json`](../schema/ux-md.schema.json) for IDE frontmatter validation):
 
 | Rule ID | Severity | Verification logic |
 | :--- | :--- | :--- |
@@ -101,3 +101,8 @@ The `UX.md` linter enforces 11 deterministic rules:
 | `incomplete-state-matrix` | `error` | Verifies Section 6 defines all 4 mandatory states (`Loading`, `Empty`, `Error`, `Populated`) for every listed view. |
 | `vague-prose` | `warning` | Scans for banned ambiguous phrases without supporting numbers (for example *"small form"*, *"clean layout"*, *"intuitive navigation"*, *"fast loading"*). |
 | `design-md-mismatch` | `warning` | When `DESIGN.md` is present in the project root, checks for `token_source: "DESIGN.md"` alignment. |
+| `route-parity` | `warning` | With `--check-code`, verifies that discovered routes in `src/app` or `src/pages` are registered in Section 4 of `UX.md`. |
+| `missing-code-route` | `warning` | With `--check-code`, flags routes documented in Section 4 of `UX.md` that have no corresponding route file when a router directory exists. |
+| `missing-layout-primitive` | `warning` | With `--check-code`, verifies that discovered route files compose at least one declared layout primitive (`AppShell`, `PageHeader`, `PageSection`, `DataStateBoundary`). |
+| `dead-handler` | `error` | With `--check-code`, scans UI source files for no-op handlers (`onClick={() => {}}`, `href="#"`, `javascript:void(0)`) forbidden by Section 11. |
+| `rogue-z-index` | `warning` | With `--check-code`, flags hardcoded z-index utilities (`z-[999]`, `zIndex: 9999`) outside the `z_index_scale` declared in frontmatter. |

@@ -20,10 +20,11 @@ Usage:
   npx ux-md <command> [options]
 
 Commands:
-  init        Scan the current directory (or use --archetype) and generate UX.md
+  init        Scan the current directory (or use --archetype / --preset) and generate UX.md
   extract     Scan package.json, AGENTS.md, DESIGN.md, and source routes into JSON
-  generate    Generate a 12-section UX.md from an archetype preset or scan file
-  validate    Validate UX.md against 12 structural linter rules (supports --strict --check-code)
+  generate    Generate a 12-section UX.md from an archetype, product preset, or scan file
+  validate    Validate UX.md against 16 structural & code-contract linter rules (--strict --check-code)
+  scaffold    Generate CSS contract variables + React/TypeScript layout primitives from UX.md
   preview     Render an interactive HTML wireframe and breakpoint simulator (1280px / 768px / 375px)
   diff        Compare two UX.md versions for route, archetype, budget, or threshold regressions
   mcp         Start the zero-dependency Model Context Protocol (MCP) server over stdio
@@ -31,9 +32,13 @@ Commands:
 Archetypes:
   b2b-saas-workspace | ai-chat-canvas | analytics-dashboard | ecommerce-storefront | developer-tool
 
+Product Presets (--preset):
+  linear | chatgpt-canvas | claude-artifacts | stripe-dashboard | datadog | shopify-storefront | supabase-studio | vercel-console
+
 Examples:
-  npx ux-md init --archetype b2b-saas-workspace --project "Acme Workspace"
+  npx ux-md init --preset linear --project "Acme Workspace"
   npx ux-md validate UX.md --strict --check-code
+  npx ux-md scaffold UX.md --out-dir src/components/ux
   npx ux-md preview UX.md --output ux-preview.html
   npx ux-md diff UX.old.md UX.md --json
   npx ux-md mcp`);
@@ -61,8 +66,9 @@ function runScript(scriptPath, forwardArgs) {
 
 if (command === 'init') {
   const hasArchetype = subArgs.includes('--archetype');
+  const hasPreset = subArgs.includes('--preset') || subArgs.includes('--list-presets');
   const hasFromScan = subArgs.includes('--from-scan');
-  if (!hasArchetype && !hasFromScan) {
+  if (!hasArchetype && !hasPreset && !hasFromScan) {
     const extractPath = path.join(scriptsDir, 'extract-ux.mjs');
     const extractRes = spawnSync(process.execPath, [extractPath, '.'], {
       encoding: 'utf8',
@@ -91,6 +97,7 @@ const commandMap = {
   generate: path.join(scriptsDir, 'generate-ux.mjs'),
   validate: path.join(scriptsDir, 'validate-ux.mjs'),
   lint: path.join(scriptsDir, 'validate-ux.mjs'),
+  scaffold: path.join(scriptsDir, 'scaffold-ux.mjs'),
   preview: path.join(scriptsDir, 'preview-ux.mjs'),
   diff: path.join(scriptsDir, 'diff-ux.mjs'),
   mcp: path.join(rootDir, 'scripts', 'mcp-server.mjs')
