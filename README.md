@@ -231,7 +231,8 @@ ux.md/
 ├── PHILOSOPHY.md
 ├── assets/
 │   ├── hero.svg
-│   └── triad-workflow.svg
+│   ├── triad-workflow.svg
+│   └── made-with-beautify.svg
 ├── bin/
 │   └── ux-md.mjs
 ├── scripts/
@@ -264,6 +265,10 @@ ux.md/
 ```
 
 ---
+
+<p align="center">
+  <a href="https://github.com/oil-oil/beautify-github-readme"><img src="./assets/made-with-beautify.svg" width="300" alt="README made with beautify-github-readme" /></a>
+</p>
 
 ## License
 

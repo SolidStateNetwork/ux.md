@@ -4,66 +4,66 @@
 
   <rect width="1200" height="360" rx="16" fill="#0B0F17" stroke="#334155" stroke-width="2" />
 
-  <g id="title-block" transform="translate(48, 52)">
-    <text x="0" y="54" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="60" font-weight="800" letter-spacing="-1.5">UX.md</text>
-    <text x="198" y="52" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="24" font-weight="600">v1.0 / skeleton-spec</text>
+  <g id="title-block" transform="translate(44, 46)">
+    <text x="0" y="54" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="56" font-weight="800" letter-spacing="-1.2">UX.md</text>
+    <text x="196" y="50" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="22" font-weight="600">v1.0 / skeleton-spec</text>
 
-    <text x="0" y="102" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="21" font-weight="400">
+    <text x="0" y="100" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400">
       Structural UI/UX contract for AI coding agents.
     </text>
-    <text x="0" y="134" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="19" font-weight="400">
+    <text x="0" y="130" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="18" font-weight="400">
       App shell budgets, route graphs, 4-state views, and layout primitives.
     </text>
 
-    <g id="triad-comparison" transform="translate(0, 168)">
-      <rect x="0" y="0" width="176" height="84" rx="8" fill="#111827" stroke="#334155" stroke-width="1.5" />
-      <text x="16" y="34" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" font-weight="700">AGENTS.md</text>
-      <text x="16" y="62" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18">Brain &amp; rules</text>
+    <g id="triad-comparison" transform="translate(0, 166)">
+      <rect x="0" y="0" width="166" height="88" rx="8" fill="#111827" stroke="#334155" stroke-width="1.5" />
+      <text x="16" y="36" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">AGENTS.md</text>
+      <text x="16" y="64" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16">Brain &amp; rules</text>
 
-      <rect x="190" y="0" width="176" height="84" rx="8" fill="#111827" stroke="#334155" stroke-width="1.5" />
-      <text x="206" y="34" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" font-weight="700">DESIGN.md</text>
-      <text x="206" y="62" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18">Skin &amp; tokens</text>
+      <rect x="178" y="0" width="166" height="88" rx="8" fill="#111827" stroke="#334155" stroke-width="1.5" />
+      <text x="194" y="36" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">DESIGN.md</text>
+      <text x="194" y="64" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16">Skin &amp; tokens</text>
 
-      <rect x="380" y="0" width="196" height="84" rx="8" fill="#0C2D48" stroke="#38BDF8" stroke-width="2" />
-      <text x="396" y="34" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" font-weight="700">UX.md</text>
-      <text x="396" y="62" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="18" font-weight="600">Skeleton &amp; flows</text>
+      <rect x="356" y="0" width="188" height="88" rx="8" fill="#0C2D48" stroke="#38BDF8" stroke-width="2" />
+      <text x="372" y="36" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">UX.md</text>
+      <text x="372" y="64" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif" font-size="16" font-weight="600">Skeleton &amp; flows</text>
     </g>
   </g>
 
-  <g id="appshell-specimen" transform="translate(656, 32)">
-    <rect x="0" y="0" width="496" height="296" rx="10" fill="#111827" stroke="#334155" stroke-width="2" />
+  <g id="appshell-specimen" transform="translate(612, 28)">
+    <rect x="0" y="0" width="544" height="304" rx="10" fill="#111827" stroke="#334155" stroke-width="2" />
 
-    <rect x="0" y="0" width="496" height="44" rx="10" fill="#1E293B" />
-    <text x="18" y="28" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">&lt;AppShell&gt;</text>
-    <text x="148" y="28" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">1280px budget | CLS = 0</text>
+    <rect x="0" y="0" width="544" height="44" rx="10" fill="#1E293B" />
+    <text x="18" y="28" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17" font-weight="700">&lt;AppShell&gt;</text>
+    <text x="142" y="28" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">1280px budget | CLS = 0</text>
 
-    <rect x="14" y="56" width="118" height="226" rx="6" fill="#0B0F17" stroke="#334155" stroke-width="1.5" />
-    <text x="24" y="84" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">Nav 240px</text>
-    <rect x="24" y="102" width="96" height="12" rx="3" fill="#1E293B" />
-    <rect x="24" y="122" width="84" height="12" rx="3" fill="#38BDF8" />
-    <rect x="24" y="142" width="90" height="12" rx="3" fill="#1E293B" />
-    <text x="24" y="264" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">z-index: 20</text>
+    <rect x="14" y="56" width="136" height="234" rx="6" fill="#0B0F17" stroke="#334155" stroke-width="1.5" />
+    <text x="26" y="84" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">Nav 240px</text>
+    <rect x="26" y="102" width="110" height="12" rx="3" fill="#1E293B" />
+    <rect x="26" y="122" width="94" height="12" rx="3" fill="#38BDF8" />
+    <rect x="26" y="142" width="102" height="12" rx="3" fill="#1E293B" />
+    <text x="26" y="270" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">z-index: 20</text>
 
-    <rect x="142" y="56" width="212" height="46" rx="6" fill="#0B0F17" stroke="#334155" stroke-width="1.5" />
-    <text x="154" y="85" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="600">&lt;PageHeader&gt;</text>
-    <rect x="292" y="66" width="52" height="26" rx="4" fill="#0284C7" />
-    <text x="301" y="84" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">CTA</text>
+    <rect x="160" y="56" width="224" height="46" rx="6" fill="#0B0F17" stroke="#334155" stroke-width="1.5" />
+    <text x="172" y="85" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="600">&lt;PageHeader&gt;</text>
+    <rect x="316" y="66" width="56" height="26" rx="4" fill="#0284C7" />
+    <text x="344" y="84" text-anchor="middle" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="700">CTA</text>
 
-    <rect x="142" y="112" width="212" height="170" rx="6" fill="#0B0F17" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="5 3" />
-    <text x="154" y="140" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">4-State Matrix</text>
-    <text x="154" y="168" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">1. Loading</text>
-    <text x="154" y="194" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">2. Empty + CTA</text>
-    <text x="154" y="220" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">3. Error Retry</text>
-    <text x="154" y="246" fill="#34D399" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="600">4. Populated</text>
-    <text x="154" y="270" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">URL: ?q=&amp;inspect=id</text>
+    <rect x="160" y="112" width="224" height="178" rx="6" fill="#0B0F17" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="5 3" />
+    <text x="172" y="138" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">4-State Matrix</text>
+    <text x="172" y="164" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">1. Loading</text>
+    <text x="172" y="188" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">2. Empty + CTA</text>
+    <text x="172" y="212" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">3. Error Retry</text>
+    <text x="172" y="236" fill="#34D399" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="600">4. Populated</text>
+    <text x="172" y="270" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">URL: ?q=&amp;inspect=id</text>
 
-    <rect x="364" y="56" width="118" height="226" rx="6" fill="#0C2D48" stroke="#38BDF8" stroke-width="1.5" />
-    <text x="374" y="84" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="700">Drawer</text>
-    <text x="374" y="110" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">540px wide</text>
-    <text x="374" y="138" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">&gt;= 5 fields</text>
-    <rect x="374" y="156" width="96" height="14" rx="3" fill="#1E293B" />
-    <rect x="374" y="178" width="96" height="14" rx="3" fill="#1E293B" />
-    <text x="374" y="236" fill="#FBBF24" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">isDirty</text>
-    <text x="374" y="264" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">z-index: 30</text>
+    <rect x="394" y="56" width="136" height="234" rx="6" fill="#0C2D48" stroke="#38BDF8" stroke-width="1.5" />
+    <text x="406" y="84" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">Drawer</text>
+    <text x="406" y="110" fill="#F8FAFC" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">540px wide</text>
+    <text x="406" y="136" fill="#CBD5E1" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">&gt;= 5 fields</text>
+    <rect x="406" y="154" width="110" height="14" rx="3" fill="#1E293B" />
+    <rect x="406" y="176" width="110" height="14" rx="3" fill="#1E293B" />
+    <text x="406" y="240" fill="#FBBF24" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">isDirty</text>
+    <text x="406" y="270" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">z-index: 30</text>
   </g>
 </svg>

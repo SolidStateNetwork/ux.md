@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="64" viewBox="0 0 420 64" role="img" aria-labelledby="title desc">
+  <title id="title">README made with beautify-github-readme</title>
+  <desc id="desc">Compact project-native signature badge linking to the oil-oil/beautify-github-readme skill.</desc>
+
+  <rect width="420" height="64" rx="10" fill="#0B0F17" stroke="#334155" stroke-width="1.5" />
+
+  <g id="wireframe-motif" transform="translate(14, 12)">
+    <rect x="0" y="0" width="44" height="40" rx="5" fill="#111827" stroke="#334155" stroke-width="1.2" />
+    <rect x="5" y="5" width="10" height="30" rx="2" fill="#0C2D48" stroke="#38BDF8" stroke-width="1" />
+    <rect x="19" y="5" width="20" height="8" rx="2" fill="#1E293B" />
+    <rect x="19" y="16" width="20" height="19" rx="2" fill="#0B0F17" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1.5" />
+  </g>
+
+  <text x="72" y="25" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" letter-spacing="1.2">README MADE WITH</text>
+  <text x="72" y="46" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">beautify-github-readme</text>
+
+  <g id="outbound-cue" transform="translate(374, 18)">
+    <rect x="0" y="0" width="28" height="28" rx="6" fill="#111827" stroke="#334155" stroke-width="1.2" />
+    <path d="M 10 18 L 18 10 M 12 10 L 18 10 L 18 16" fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>
