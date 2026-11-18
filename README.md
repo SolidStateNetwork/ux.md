@@ -1,7 +1,7 @@
 # UX.md
 
 <p align="center">
-  <img src="./assets/hero.svg" alt="UX.md: Structural UI/UX specification, CLI linter, MCP server, and AI agent skill" width="100%" />
+  <img src="./assets/hero.svg?v=2" alt="UX.md: Structural UI/UX specification, CLI linter, MCP server, and AI agent skill" width="100%" />
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@ Giving an AI coding agent a `DESIGN.md` ensures every screen uses the right colo
 | **`UX.md`** | **Skeleton & behavior** | App shell geometry, page archetypes, route graph, modal vs. drawer thresholds, 4-state view matrix (`Loading / Empty / Error / Populated`), URL state persistence, and code layout primitives |
 
 <p align="center">
-  <img src="./assets/triad-workflow.svg" alt="UX.md three-phase pipeline: Phase 1 Extract, Phase 2 Synthesize, Phase 3 Enforce" width="100%" />
+  <img src="./assets/triad-workflow.svg?v=2" alt="UX.md three-phase pipeline: Phase 1 Extract, Phase 2 Synthesize, Phase 3 Enforce" width="100%" />
 </p>
 
 ---
