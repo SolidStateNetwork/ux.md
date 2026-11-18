@@ -1,0 +1,36 @@
+name: UX.md Spec & Linter CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate Examples & Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate all 5 reference UX.md examples (--strict)
+        run: |
+          node skills/ux-md-generator/scripts/validate-ux.mjs examples/b2b-saas-workspace/UX.md --strict
+          node skills/ux-md-generator/scripts/validate-ux.mjs examples/ai-chat-canvas/UX.md --strict
+          node skills/ux-md-generator/scripts/validate-ux.mjs examples/analytics-dashboard/UX.md --strict
+          node skills/ux-md-generator/scripts/validate-ux.mjs examples/ecommerce-storefront/UX.md --strict
+          node skills/ux-md-generator/scripts/validate-ux.mjs examples/developer-tool/UX.md --strict
+
+      - name: Test CLI Generator, Extractor, HTML Previewer, and Diff Engine
+        run: |
+          node skills/ux-md-generator/scripts/extract-ux.mjs . --output /tmp/ux-scan.json
+          node skills/ux-md-generator/scripts/generate-ux.mjs --from-scan /tmp/ux-scan.json --project "CI Test Project" --output /tmp/generated-UX.md
+          node skills/ux-md-generator/scripts/validate-ux.mjs /tmp/generated-UX.md --strict
+          node skills/ux-md-generator/scripts/preview-ux.mjs /tmp/generated-UX.md --output /tmp/ux-preview.html
+          node skills/ux-md-generator/scripts/diff-ux.mjs examples/b2b-saas-workspace/UX.md /tmp/generated-UX.md --json

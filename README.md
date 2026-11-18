@@ -5,12 +5,13 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml"><img src="https://github.com/SolidStateNetwork/ux.md/actions/workflows/validate.yml/badge.svg" alt="UX.md Spec & Linter CI" /></a>
   <a href="docs/spec.md"><img src="https://img.shields.io/badge/Specification-v1.0-0284c7" alt="Spec v1.0" /></a>
   <a href="skills/ux-md-generator/SKILL.md"><img src="https://img.shields.io/badge/Agent_Skill-ux--md--generator-0f172a" alt="Agent Skill" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-334155" alt="MIT License" /></a>
 </p>
 
-`UX.md` is a format specification, zero-dependency linter, and installable AI agent skill for structural UI/UX architecture.
+`UX.md` is a format specification, zero-dependency CLI toolkit (extractor, generator, linter, HTML previewer, and diff engine), and installable AI agent skill for structural UI/UX architecture.
 
 While `AGENTS.md` defines engineering rules and `DESIGN.md` defines visual tokens (the skin), `UX.md` defines the application skeleton and interaction rules: app shells, viewport budget math, scroll and z-index ownership, page archetypes, route reachability graphs, URL state persistence, 4-state view contracts, and mandatory layout primitives.
 
@@ -42,9 +43,28 @@ Works with Claude Code, Antigravity / Gemini CLI, Cursor, OpenCode, OpenAI Codex
 npx skills add SolidStateNetwork/ux.md --skill ux-md-generator --copy -y
 ```
 
-### 2. Generate, extract, or audit a `UX.md`
+### 2. CLI toolkit (`extract`, `generate`, `validate`, `preview`, `diff`)
 
-Prompt your coding agent in any of the four operating modes:
+All five bundled scripts run on Node.js 20+ with zero external npm dependencies:
+
+```bash
+# 1. Scan an existing repository (framework, DESIGN.md tokens, and source routes)
+node .agents/skills/ux-md-generator/scripts/extract-ux.mjs . --output ux-scan.json
+
+# 2. Generate a 12-section UX.md from an archetype preset or scan file
+node .agents/skills/ux-md-generator/scripts/generate-ux.mjs --archetype b2b-saas-workspace --project "Acme Workspace" --output UX.md
+
+# 3. Validate UX.md against 11 linter rules + live source code route parity
+node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict --check-code
+
+# 4. Render an interactive HTML wireframe & breakpoint simulator (1280px / 768px / 375px)
+node .agents/skills/ux-md-generator/scripts/preview-ux.mjs UX.md --output ux-preview.html
+
+# 5. Diff two UX.md versions for route, budget, or threshold regressions
+node .agents/skills/ux-md-generator/scripts/diff-ux.mjs UX.old.md UX.md --json
+```
+
+### 3. Prompt your AI coding agent
 
 - **Synthesize (greenfield / `init`):**
   > "Use `ux-md-generator` to generate a `UX.md` for our Next.js B2B billing workspace aligned with `.ai/01-architecture.md` and `DESIGN.md`."
@@ -54,18 +74,6 @@ Prompt your coding agent in any of the four operating modes:
   > "Run `ux-md-generator` in audit mode across `src/app/` to unify our container widths, modal/drawer thresholds, and missing empty/error states into `UX.md`."
 - **Evolve when adding routes:**
   > "Add the `/settings/webhooks` route to `UX.md` and validate it before implementing the page."
-
-### 3. Validate `UX.md` with the linter
-
-```bash
-node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --strict
-```
-
-Emit structured JSON for CI pipelines or agent self-checks:
-
-```bash
-node .agents/skills/ux-md-generator/scripts/validate-ux.mjs UX.md --json
-```
 
 ---
 
@@ -127,7 +135,7 @@ layout_primitives:
 | **`5. Overlay & Feedback Decision Matrix`** | Numeric thresholds separating `Modal` (`<= 4` fields), `Drawer` (`5 to 12` fields / inspect), `Dedicated Route` (`> 12` fields), `Popover`, and `Toast` |
 | **`6. Mandatory View States (4-State Matrix)`** | Every view mapped across `Loading (Skeleton)`, `Empty (Copy + CTA)`, `Error (Reason + In-Place Retry)`, and `Populated` |
 | **`7. Mutation, Form & Permission Ergonomics`** | Validation timing, double-submit locking, `isDirty` backdrop/`Esc` guard, 2-tier destructive rules (`Undo Toast` vs. `Confirm Modal`), and 3-way permission gates (`Hide` vs. `Disable + Tooltip` vs. `Lock Badge`) |
-| **`8. Real-Data Stress, Density & Truncation`** | Single collection scaling strategy, `min-w-0 truncate` / `line-clamp`, null fallback token, and right-aligned `tabular-nums` |
+| **`8. Real-Data Stress, Density & Truncation`** | Single collection scaling strategy, `min-w-0 truncate` / `line-clamp`, `-` null fallback token, and right-aligned `tabular-nums` |
 | **`9. Responsive Reflow & Input Choreography`** | Breakpoint collapse sequence, table-to-card conversion below `768px`, touch target size (`>= 44px` with `>= 8px` gap), tap equivalents for hover actions, and focus trapping |
 | **`10. Mandatory Layout Primitives (Code Contract)`** | Shared code wrappers (`<AppShell>`, `<PageHeader>`, `<PageSection>`, `<DataStateBoundary>`) required across all route files |
 | **`11. Project Do's, Don'ts & Agent Prompt Guide`** | Negative constraints with measurable numbers and a pre-commit verification checklist |
@@ -135,8 +143,6 @@ layout_primitives:
 ---
 
 ## Automated linter rules (`validate-ux.mjs`)
-
-The bundled linter checks mathematical invariants and cross-section referential integrity:
 
 | Rule ID | Severity | What it verifies |
 | :--- | :--- | :--- |
@@ -151,15 +157,19 @@ The bundled linter checks mathematical invariants and cross-section referential 
 | `incomplete-state-matrix` | `error` | Verifies Section 6 defines all 4 mandatory states (`Loading`, `Empty`, `Error`, `Populated`) per view |
 | `vague-prose` | `warning` | Flags non-deterministic adjectives (*"modals for small forms"*, *"clean layout"*) and unresolved `TODO`/`TBD` markers |
 | `design-md-mismatch` | `warning` | Verifies `token_source: "DESIGN.md"` alignment when a sibling `DESIGN.md` is present |
+| `route-parity` | `warning` | With `--check-code`, verifies that discovered routes in `src/app` or `src/pages` are registered in Section 4 |
 
 ---
 
-## Reference examples
+## Reference examples (all 5 core archetypes)
 
 | Example | Archetype | Highlights |
 | :--- | :--- | :--- |
 | [`examples/b2b-saas-workspace/UX.md`](examples/b2b-saas-workspace/UX.md) | `b2b-saas-workspace` | Keyboard-first issue workspace with `240px` rail, `?inspect=` slide-over drawer (`540px`), and `Cmd+K` command palette |
 | [`examples/ai-chat-canvas/UX.md`](examples/ai-chat-canvas/UX.md) | `ai-chat-canvas` | Split-pane conversational thread with synchronized artifact code/preview stage (`?artifact=`) and streaming scroll-lock rules |
+| [`examples/analytics-dashboard/UX.md`](examples/analytics-dashboard/UX.md) | `analytics-dashboard` | Global URL-persisted time/environment filter bar (`?from=&to=&env=`), `CLS = 0` chart reservations, and `600px` JSON event drawer |
+| [`examples/ecommerce-storefront/UX.md`](examples/ecommerce-storefront/UX.md) | `ecommerce-storefront` | Faceted discovery catalog, `4:5` aspect-reserved media, slide-over Cart Drawer (`?cart=open`), and guest-first checkout funnel |
+| [`examples/developer-tool/UX.md`](examples/developer-tool/UX.md) | `developer-tool` | Split SQL workbench, streaming build-log drawer (`?log=`), inline `2000ms` copy checkmarks, and Tier-2 slug-confirm modals |
 
 ---
 
@@ -167,13 +177,17 @@ The bundled linter checks mathematical invariants and cross-section referential 
 
 ```text
 ux.md/
+├── .github/workflows/validate.yml
 ├── README.md
 ├── PHILOSOPHY.md
 ├── docs/
 │   └── spec.md
 ├── examples/
 │   ├── b2b-saas-workspace/UX.md
-│   └── ai-chat-canvas/UX.md
+│   ├── ai-chat-canvas/UX.md
+│   ├── analytics-dashboard/UX.md
+│   ├── ecommerce-storefront/UX.md
+│   └── developer-tool/UX.md
 └── skills/
     └── ux-md-generator/
         ├── SKILL.md
@@ -185,7 +199,11 @@ ux.md/
         │   ├── quality-checklist.md
         │   └── writing-style-guide.md
         └── scripts/
-            └── validate-ux.mjs
+            ├── extract-ux.mjs
+            ├── generate-ux.mjs
+            ├── validate-ux.mjs
+            ├── preview-ux.mjs
+            └── diff-ux.mjs
 ```
 
 ---

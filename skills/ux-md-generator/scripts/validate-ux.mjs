@@ -5,7 +5,15 @@ import path from 'node:path';
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const strictMode = args.includes('--strict');
-const fileArg = args.find((a) => !a.startsWith('--')) || 'UX.md';
+const checkCodeIdx = args.indexOf('--check-code');
+const checkCodeEnabled = checkCodeIdx !== -1;
+const checkCodeDirArg =
+  checkCodeEnabled && args[checkCodeIdx + 1] && !args[checkCodeIdx + 1].startsWith('--')
+    ? args[checkCodeIdx + 1]
+    : null;
+
+const positionalArgs = args.filter((a, idx) => !a.startsWith('--') && idx !== (checkCodeDirArg ? checkCodeIdx + 1 : -1));
+const fileArg = positionalArgs[0] || 'UX.md';
 const targetPath = path.resolve(process.cwd(), fileArg);
 
 const findings = [];
@@ -165,6 +173,8 @@ if (sec3Text && definedArchetypes.size === 0) {
 }
 
 const usedArchetypes = new Set();
+const documentedRoutes = new Set();
+
 if (sec4Text) {
   const sec4Lines = sec4Text.split(/\r?\n/);
   let inRouteTable = false;
@@ -189,6 +199,7 @@ if (sec4Text) {
 
       if (cells.length >= 5) {
         const [route, archetype, entryTrigger, primaryAction, exitFallback] = cells;
+        documentedRoutes.add(route);
         usedArchetypes.add(archetype);
 
         if (definedArchetypes.size > 0 && !definedArchetypes.has(archetype)) {
@@ -297,7 +308,8 @@ for (const vp of VAGUE_PATTERNS) {
   }
 }
 
-const siblingDesignMd = path.join(path.dirname(targetPath), 'DESIGN.md');
+const projectRoot = checkCodeDirArg ? path.resolve(process.cwd(), checkCodeDirArg) : path.dirname(targetPath);
+const siblingDesignMd = path.join(projectRoot, 'DESIGN.md');
 if (fs.existsSync(siblingDesignMd)) {
   const tokenSourceMatch = frontmatterText.match(/^token_source\s*:\s*["']?([^"'\r\n]+)["']?/m);
   const tokenSource = tokenSourceMatch ? tokenSourceMatch[1].trim() : '';
@@ -308,6 +320,73 @@ if (fs.existsSync(siblingDesignMd)) {
       'Sibling DESIGN.md exists in the directory, but UX.md frontmatter does not declare token_source: "DESIGN.md".',
       'frontmatter.token_source'
     );
+  }
+}
+
+function discoverCodeRoutes(rootDir) {
+  const discovered = new Set();
+  const appDirs = ['src/app', 'app'];
+  const pageDirs = ['src/pages', 'pages', 'src/routes'];
+
+  function walkAppRouter(dir, baseDir) {
+    if (!fs.existsSync(dir)) return;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.') || entry.name === 'api' || entry.name === 'node_modules') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkAppRouter(full, baseDir);
+      } else if (/^(?:page|\+page)\.(?:tsx|jsx|ts|js|vue|svelte)$/.test(entry.name)) {
+        const relDir = path.relative(baseDir, dir).split(path.sep).join('/');
+        const normalized =
+          '/' +
+          relDir
+            .split('/')
+            .filter((seg) => seg && !/^\(.*\)$/.test(seg) && !seg.startsWith('@'))
+            .map((seg) => seg.replace(/^\[(?:\.\.\.)?([^\]]+)\]$/, ':$1'))
+            .join('/');
+        discovered.add(normalized === '/' ? '/' : normalized.replace(/\/+$/, ''));
+      }
+    }
+  }
+
+  function walkPagesRouter(dir, baseDir) {
+    if (!fs.existsSync(dir)) return;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.') || entry.name.startsWith('_') || entry.name === 'api') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkPagesRouter(full, baseDir);
+      } else if (/\.(?:tsx|jsx|vue|svelte)$/.test(entry.name)) {
+        const relFile = path.relative(baseDir, full).split(path.sep).join('/');
+        const withoutExt = relFile.replace(/\.(?:tsx|jsx|vue|svelte)$/, '').replace(/(?:^|\/)index$/, '');
+        const normalized =
+          '/' +
+          withoutExt
+            .split('/')
+            .filter(Boolean)
+            .map((seg) => seg.replace(/^\[(?:\.\.\.)?([^\]]+)\]$/, ':$1'))
+            .join('/');
+        discovered.add(normalized || '/');
+      }
+    }
+  }
+
+  for (const d of appDirs) walkAppRouter(path.join(rootDir, d), path.join(rootDir, d));
+  for (const d of pageDirs) walkPagesRouter(path.join(rootDir, d), path.join(rootDir, d));
+  return Array.from(discovered);
+}
+
+if (checkCodeEnabled) {
+  const codeRoutes = discoverCodeRoutes(projectRoot);
+  for (const codeRoute of codeRoutes) {
+    if (!documentedRoutes.has(codeRoute)) {
+      addFinding(
+        'route-parity',
+        'warning',
+        `Code route "${codeRoute}" exists in source files but is not registered in Section 4 of UX.md.`,
+        'section-4'
+      );
+    }
   }
 }
 
